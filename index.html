@@ -1,52 +1,61 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Nord Évasion 59</title>
-
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Font moderne -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Inter', sans-serif;
-      background: #000;
-    }
-  </style>
 </head>
-<body>
+<body class="bg-black text-white flex items-center justify-center h-screen">
 
-  <main class="w-full h-screen flex items-center justify-center bg-black text-white">
-    <div class="text-center px-6">
+  <div class="text-center max-w-md w-full px-6">
+    <h1 class="text-4xl font-bold mb-6">Nord Évasion 59</h1>
 
-      <!-- Titre -->
-      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-        Nord Évasion 59
-      </h1>
+    <p class="text-white/70 mb-8">
+      Avant de partir, dis-nous comment t’appeler 🙂
+    </p>
 
-      <!-- Slogan -->
-      <p class="text-lg md:text-2xl text-white/70 mb-12 max-w-2xl mx-auto">
-        Voyager mieux, à prix maîtrisé, sans compromis sur la qualité.
-      </p>
+    <input
+      id="username"
+      type="text"
+      placeholder="Ton prénom"
+      class="w-full mb-4 px-4 py-3 bg-black border border-white/30 text-white focus:outline-none"
+    />
 
-      <!-- Bouton -->
-      <button
-        onclick="window.location.href='sejours.html'"
-        class="group inline-flex items-center gap-3 border border-white/30 px-8 py-4 text-sm md:text-base uppercase tracking-widest transition-all duration-300 hover:border-white hover:bg-white hover:text-black"
-      >
-        Partir à l’aventure
-        <span class="transition-transform duration-300 group-hover:translate-x-1">→</span>
-      </button>
+    <input
+      id="email"
+      type="email"
+      placeholder="Ton email"
+      class="w-full mb-6 px-4 py-3 bg-black border border-white/30 text-white focus:outline-none"
+    />
 
-    </div>
-  </main>
+    <button
+      onclick="goToDashboard()"
+      class="w-full border border-white py-3 hover:bg-white hover:text-black transition"
+    >
+      Partir à l’aventure →
+    </button>
+
+    <p class="text-xs text-white/40 mt-4">
+      Aucune inscription. Données stockées uniquement sur votre appareil.
+    </p>
+  </div>
+
+  <script>
+    function goToDashboard() {
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+
+      if (!username || !email) {
+        alert("Merci de remplir les deux champs 🙂");
+        return;
+      }
+
+      localStorage.setItem("ne59_username", username);
+      localStorage.setItem("ne59_email", email);
+
+      window.location.href = "dashboard.html";
+    }
+  </script>
 
 </body>
 </html>
