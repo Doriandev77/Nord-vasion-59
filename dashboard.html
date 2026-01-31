@@ -1,39 +1,202 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard — Nord Évasion 59</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – Nord Évasion 59</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body class="bg-black text-white h-screen flex items-center justify-center">
+<body class="bg-blue-50 text-slate-800">
 
-  <div class="text-center px-6 max-w-2xl">
-
-    <h1 class="text-5xl font-bold mb-6">
-      Bienvenue <span id="name"></span> 👋
-    </h1>
-
-    <p class="text-white/75 text-xl mb-14">
-      On a sélectionné des expériences qui pourraient vraiment te plaire.
-    </p>
-
-    <button class="border border-white/40 px-10 py-5 uppercase tracking-widest hover:bg-white hover:text-black transition">
-      Découvrir les séjours
+<!-- Header -->
+<header class="bg-white shadow px-8 py-4 flex justify-between items-center">
+  <h1 class="text-2xl font-bold text-blue-700">Nord Évasion 59</h1>
+  <div class="flex items-center gap-8">
+    <span class="text-slate-600">Bonjour <strong id="user-name"></strong> 👋</span>
+    <button onclick="toggleCart()" class="relative text-blue-700 font-semibold">
+      Panier 🛒
+      <span id="cart-count" class="absolute -top-2 -right-3 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex justify-center items-center">0</span>
     </button>
-
   </div>
+</header>
 
-  <script>
-    const username = localStorage.getItem("ne59_username");
+<!-- Search & Filters -->
+<section class="px-8 py-6 bg-white shadow-sm">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <!-- Recherche texte -->
+    <input id="searchText" type="text" placeholder="Rechercher une destination..." class="w-full md:w-1/2 border border-blue-200 rounded px-4 py-2 focus:outline-none" oninput="renderTrips()">
+    <!-- Filtre catégories -->
+    <select id="filterCategory" class="w-full md:w-1/4 border border-blue-200 rounded px-4 py-2" onchange="renderTrips()">
+      <option value="all">Toutes catégories</option>
+      <option value="Mer">Mer</option>
+      <option value="Montagne">Montagne</option>
+      <option value="City trip">City trip</option>
+      <option value="International">International</option>
+    </select>
+  </div>
+</section>
 
-    if (!username) {
-      window.location.href = "index.html";
-    }
+<!-- Trip List -->
+<section class="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="trip-list"></section>
 
-    document.getElementById("name").textContent = username;
-  </script>
+<!-- Cart -->
+<div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50">
+  <div class="bg-white w-11/12 md:w-2/3 lg:w-1/2 p-6 rounded shadow-lg">
+    <h2 class="text-xl font-semibold text-blue-700 mb-4">Panier</h2>
+    <ul id="cart-items" class="space-y-4"></ul>
+    <div class="mt-6 flex justify-between items-center">
+      <strong>Total :</strong>
+      <span id="cart-total" class="font-bold text-blue-700">0 €</span>
+    </div>
+    <button onclick="toggleCart()" class="mt-4 w-full bg-blue-700 text-white py-3 rounded">Fermer</button>
+  </div>
+</div>
+
+<script>
+/* Données des séjours */
+const trips = [
+  {
+    id: "venise",
+    title: "Carnaval de Venise",
+    price: 780,
+    dates: "11 fév – 16 fév 2026",
+    category: "International",
+    description: "Visite Venise, Vérone, bateau à Burano.",
+  },
+  {
+    id: "nice-menton",
+    title: "Carnaval de Nice et Menton",
+    price: 765,
+    dates: "18 fév – 23 fév 2026",
+    category: "International",
+    description: "Nice, Menton, Parfum Eze, marché aux fleurs.",
+  },
+  {
+    id: "portugal",
+    title: "Séjour au Portugal",
+    price: 1610,
+    dates: "8 mai – 18 mai",
+    category: "International",
+    description: "Bilbao, Porto, Lisbonne, croisière Douro.",
+  },
+  {
+    id: "vienne-budapest",
+    title: "Vienne & Budapest",
+    price: 1275,
+    dates: "27 juin – 4 juil",
+    category: "International",
+    description: "Découverte Vienne & Budapest.",
+  },
+  {
+    id: "lourdes",
+    title: "Lourdes & Pyrénées",
+    price: 545,
+    dates: "26 juil – 2 août",
+    category: "Montagne",
+    description: "Montagne, marchés locaux.",
+  },
+  {
+    id: "versilia",
+    title: "La Versilia – Côte Tyrrhénienne",
+    price: 855,
+    dates: "6 sept – 12 sept",
+    category: "Mer",
+    description: "Cinque Terre, Chianti, mer.",
+  },
+  {
+    id: "tyrol",
+    title: "Transhumance au Tyrol",
+    price: 1065,
+    dates: "23 sept – 30 sept",
+    category: "Montagne",
+    description: "Tyrol, traditions locales.",
+  },
+  {
+    id: "rome-florence",
+    title: "Escapade Rome, Florence et Pise",
+    price: 930,
+    dates: "26 oct – 1er nov",
+    category: "International",
+    description: "Italie classique : Rome, Florence, Pise.",
+  }
+];
+
+/* Récup prénom */
+document.getElementById("user-name").textContent = localStorage.getItem("ne59_username") || "";
+
+/* Panier */
+let cart = JSON.parse(localStorage.getItem("ne59_cart")) || [];
+
+function saveCart() {
+  localStorage.setItem("ne59_cart", JSON.stringify(cart));
+  document.getElementById("cart-count").textContent = cart.length;
+}
+
+function toggleCart() {
+  document.getElementById("cart-modal").classList.toggle("hidden");
+  renderCart();
+}
+
+function addToCart(id) {
+  if (!cart.includes(id)) cart.push(id);
+  saveCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i !== id);
+  saveCart();
+  renderCart();
+}
+
+/* Affichage */
+function renderTrips() {
+  const text = document.getElementById("searchText").value.toLowerCase();
+  const category = document.getElementById("filterCategory").value;
+  const container = document.getElementById("trip-list");
+  container.innerHTML = "";
+
+  trips.filter(trip => {
+    const matchText = trip.title.toLowerCase().includes(text);
+    const matchCat = category === "all" || trip.category === category;
+    return matchText && matchCat;
+  }).forEach(trip => {
+    const card = document.createElement("div");
+    card.className = "bg-white shadow rounded p-6";
+    card.innerHTML = `
+      <h3 class="text-xl font-semibold text-blue-700 mb-2">${trip.title}</h3>
+      <p class="text-sm text-slate-600 mb-1">${trip.dates}</p>
+      <p class="font-bold text-blue-600 mb-2">${trip.price} €</p>
+      <p class="text-sm text-slate-700 mb-4">${trip.description}</p>
+      <button onclick="addToCart('${trip.id}')" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Ajouter au panier</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderCart() {
+  const list = document.getElementById("cart-items");
+  list.innerHTML = "";
+  let total = 0;
+  cart.forEach(id => {
+    const trip = trips.find(t => t.id === id);
+    total += trip.price;
+    const li = document.createElement("li");
+    li.className = "flex justify-between items-center";
+    li.innerHTML = `
+      <span>${trip.title} — ${trip.price} €</span>
+      <button onclick="removeFromCart('${id}')" class="text-red-600">✕</button>
+    `;
+    list.appendChild(li);
+  });
+  document.getElementById("cart-total").textContent = total + " €";
+}
+
+renderTrips();
+saveCart();
+</script>
 
 </body>
 </html>
