@@ -4,57 +4,64 @@
   <meta charset="UTF-8">
   <title>Nord Évasion 59</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .ambient {
+      background:
+        radial-gradient(800px circle at 30% 40%, rgba(255,255,255,0.08), transparent 40%),
+        radial-gradient(700px circle at 70% 60%, rgba(255,255,255,0.06), transparent 45%);
+    }
+  </style>
 </head>
-<body class="bg-black text-white flex items-center justify-center h-screen">
+<body>
 
-  <div class="text-center max-w-md w-full px-6">
-    <h1 class="text-4xl font-bold mb-6">Nord Évasion 59</h1>
-
-    <p class="text-white/70 mb-8">
-      Avant de partir, dis-nous comment t’appeler 🙂
-    </p>
-
-    <input
-      id="username"
-      type="text"
-      placeholder="Ton prénom"
-      class="w-full mb-4 px-4 py-3 bg-black border border-white/30 text-white focus:outline-none"
-    />
-
-    <input
-      id="email"
-      type="email"
-      placeholder="Ton email"
-      class="w-full mb-6 px-4 py-3 bg-black border border-white/30 text-white focus:outline-none"
-    />
-
-    <button
-      onclick="goToDashboard()"
-      class="w-full border border-white py-3 hover:bg-white hover:text-black transition"
+  <main class="relative w-full h-screen flex items-center justify-center text-white ambient">
+    
+    <!-- Bloc zoomé -->
+    <div
+      id="hero"
+      class="text-center px-6 max-w-4xl transform scale-110 md:scale-125 opacity-0"
     >
-      Partir à l’aventure →
-    </button>
 
-    <p class="text-xs text-white/40 mt-4">
-      Aucune inscription. Données stockées uniquement sur votre appareil.
-    </p>
-  </div>
+      <h1 class="text-6xl md:text-8xl font-bold tracking-tight mb-8">
+        Nord Évasion 59
+      </h1>
+
+      <p class="text-xl md:text-3xl text-white/80 mb-16 leading-relaxed">
+        Des voyages accessibles, pensés pour profiter vraiment,<br class="hidden md:block">
+        sans sacrifier la qualité.
+      </p>
+
+      <button
+        onclick="window.location.href='dashboard.html'"
+        class="inline-flex items-center gap-3 border border-white/40 px-10 py-5 text-base md:text-lg uppercase tracking-widest transition-all duration-300 hover:bg-white hover:text-black"
+      >
+        Partir à l’aventure
+        <span>→</span>
+      </button>
+
+    </div>
+  </main>
 
   <script>
-    function goToDashboard() {
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
+    // Zoom + fade in (effet proximité)
+    window.onload = () => {
+      const hero = document.getElementById('hero');
 
-      if (!username || !email) {
-        alert("Merci de remplir les deux champs 🙂");
-        return;
-      }
-
-      localStorage.setItem("ne59_username", username);
-      localStorage.setItem("ne59_email", email);
-
-      window.location.href = "dashboard.html";
-    }
+      hero.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+      hero.style.opacity = 1;
+      hero.style.transform = 'scale(1)';
+    };
   </script>
 
 </body>
