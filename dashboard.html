@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard — Nord Évasion 59</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black text-white h-screen flex items-center justify-center">
+
+  <div class="text-center px-6 max-w-2xl">
+
+    <h1 class="text-5xl font-bold mb-6">
+      Bienvenue <span id="name"></span> 👋
+    </h1>
+
+    <p class="text-white/75 text-xl mb-14">
+      On a sélectionné des expériences qui pourraient vraiment te plaire.
+    </p>
+
+    <button class="border border-white/40 px-10 py-5 uppercase tracking-widest hover:bg-white hover:text-black transition">
+      Découvrir les séjours
+    </button>
+
+  </div>
+
+  <script>
+    const username = localStorage.getItem("ne59_username");
+
+    if (!username) {
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("name").textContent = username;
+  </script>
+
+</body>
+</html>
