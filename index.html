@@ -1,141 +1,123 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nord Évasion 59 - Rejoins l'aventure</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nord Évasion 59</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- tsParticles -->
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 
-  <!-- GSAP pour animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <!-- Font cinéma -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
     html, body {
       margin: 0;
-      padding: 0;
       height: 100%;
-      overflow: hidden; /* pas de scroll */
-      font-family: 'Montserrat', sans-serif;
-      background-color: #0b0f2c; /* bleu nuit profond */
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: black;
     }
 
-    /* Hero container */
-    .hero {
-      position: relative;
+    /* Vidéo plein écran */
+    video {
+      position: fixed;
+      inset: 0;
       width: 100%;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: white;
-    }
-
-    /* Overlay lune glow */
-    .overlay-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 700px;
-      height: 700px;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 80%);
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      filter: blur(100px);
+      height: 100%;
+      object-fit: cover;
       z-index: 1;
-      animation: pulse 6s infinite alternate;
+      filter: brightness(0.7) contrast(1.1);
     }
 
-    @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(1); opacity:0.6; }
-      100% { transform: translate(-50%, -50%) scale(1.2); opacity:0.9; }
-    }
-
-    .hero-content {
-      position: relative;
+    /* Overlay cinéma */
+    .overlay {
+      position: fixed;
+      inset: 0;
       z-index: 2;
-      max-width: 900px;
-      padding: 20px;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(0,0,0,0.2),
+        rgba(0,0,0,0.85)
+      );
     }
 
-    .btn-cta {
-      background-color: #ff6b35;
-      padding: 18px 50px;
-      font-size: 1.5rem;
-      font-weight: 700;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 5px 20px rgba(255,107,53,0.5);
-      color: white;
-      border: none;
-      outline: none;
+    /* Grain cinéma */
+    .grain::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+      opacity: 0.12;
+      z-index: 3;
+      pointer-events: none;
     }
 
-    .btn-cta:hover {
-      background-color: #ff4a10;
-      transform: scale(1.1);
-      box-shadow: 0 10px 25px rgba(255,74,16,0.6);
+    /* Letterbox */
+    .letterbox-top,
+    .letterbox-bottom {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 8vh;
+      background: black;
+      z-index: 10;
     }
+
+    .letterbox-top { top: 0; }
+    .letterbox-bottom { bottom: 0; }
   </style>
 </head>
-<body>
+<body class="grain">
 
-  <!-- Particules étoiles -->
-  <div id="tsparticles"></div>
+  <!-- Vidéo background -->
+  <video autoplay muted loop playsinline>
+    <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-the-sea-4244/1080p.mp4" type="video/mp4">
+  </video>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="overlay-glow"></div>
-    <div class="hero-content">
-      <h1 id="main-title" class="text-6xl md:text-7xl font-bold mb-6">Nord Évasion 59</h1>
-      <p id="main-slogan" class="text-2xl md:text-3xl mb-10">Partez à la découverte des plus beaux paysages et vivez des expériences inoubliables !</p>
-      <button onclick="window.location.href='sejours.html'" class="btn-cta" id="cta-btn">Rejoins l'aventure</button>
+  <!-- Overlays -->
+  <div class="overlay"></div>
+  <div class="letterbox-top"></div>
+  <div class="letterbox-bottom"></div>
+
+  <!-- Contenu -->
+  <main class="relative z-20 h-screen flex items-center justify-center text-white text-center px-8">
+    <div class="max-w-4xl">
+      <p id="intro" class="tracking-[0.4em] text-sm text-white/60 mb-6 uppercase">
+        Une invitation au voyage
+      </p>
+
+      <h1 id="title" class="text-5xl md:text-7xl font-bold mb-8">
+        Nord Évasion 59
+      </h1>
+
+      <p id="subtitle" class="text-lg md:text-2xl text-white/80 mb-14 leading-relaxed">
+        Des voyages humains, sincères,<br>
+        pensés pour ceux qui veulent vraiment partir.
+      </p>
+
+      <button
+        id="cta"
+        onclick="window.location.href='sejours.html'"
+        class="border border-white/60 px-10 py-4 uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-all duration-500"
+      >
+        Découvrir les voyages
+      </button>
     </div>
-  </section>
+  </main>
 
-  <!-- tsParticles init -->
+  <!-- Animations cinéma -->
   <script>
-    tsParticles.load("tsparticles", {
-      fpsLimit: 60,
-      background: {
-        color: "#0b0f2c"
-      },
-      particles: {
-        number: { value: 150 },
-        color: { value: ["#ffffff", "#ffddff", "#aabfff"] },
-        shape: { type: "circle" },
-        opacity: { value: 0.8, random: true },
-        size: { value: { min: 1, max: 3 } },
-        move: {
-          enable: true,
-          speed: 0.4,
-          direction: "none",
-          outModes: "out"
-        }
-      },
-      interactivity: {
-        events: {
-          onHover: { enable: true, mode: "repulse" },
-          onClick: { enable: false }
-        }
-      },
-      detectRetina: true
-    });
-  </script>
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-  <!-- GSAP animations -->
-  <script>
-    gsap.from("#main-title", { y: -100, opacity: 0, duration: 2, ease: "power3.out" });
-    gsap.from("#main-slogan", { y: 50, opacity: 0, duration: 2, delay: 1, ease: "power3.out" });
-    gsap.from("#cta-btn", { scale: 0.5, opacity: 0, duration: 1.5, delay: 2, ease: "elastic.out(1, 0.5)", repeat: -1, yoyo: true });
+    tl.from("#intro", { opacity: 0, y: 20, duration: 1.2 })
+      .from("#title", { opacity: 0, y: 40, duration: 1.5 }, "-=0.6")
+      .from("#subtitle", { opacity: 0, y: 30, duration: 1.3 }, "-=0.8")
+      .from("#cta", { opacity: 0, y: 20, duration: 1 }, "-=0.6");
   </script>
 
 </body>
