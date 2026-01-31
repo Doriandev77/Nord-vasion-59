@@ -3,31 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nord Évasion 59</title>
+  <title>Nord Évasion 59 - Rejoins l'aventure</title>
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Animate.css CDN pour animations -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- tsParticles -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+
+  <!-- GSAP pour animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 
   <style>
-    body, html {
-      height: 100%;
+    html, body {
       margin: 0;
-      overflow: hidden; /* Empêche le scroll */
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* pas de scroll */
       font-family: 'Montserrat', sans-serif;
+      background-color: #0b0f2c; /* bleu nuit profond */
     }
 
-    /* Background video ou image */
+    /* Hero container */
     .hero {
-      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') center center/cover no-repeat;
       position: relative;
-      height: 100vh;
       width: 100%;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -35,13 +39,24 @@
       color: white;
     }
 
-    /* Overlay sombre pour texte lisible */
-    .overlay {
+    /* Overlay lune glow */
+    .overlay-glow {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      top: 50%;
+      left: 50%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 80%);
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      filter: blur(100px);
       z-index: 1;
+      animation: pulse 6s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity:0.6; }
+      100% { transform: translate(-50%, -50%) scale(1.2); opacity:0.9; }
     }
 
     .hero-content {
@@ -51,42 +66,76 @@
       padding: 20px;
     }
 
-    /* Animation bouton hover */
     .btn-cta {
-      transition: all 0.3s ease;
+      background-color: #ff6b35;
+      padding: 18px 50px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(255,107,53,0.5);
+      color: white;
+      border: none;
+      outline: none;
     }
 
     .btn-cta:hover {
-      transform: scale(1.1);
       background-color: #ff4a10;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transform: scale(1.1);
+      box-shadow: 0 10px 25px rgba(255,74,16,0.6);
     }
   </style>
 </head>
 <body>
 
-  <section class="hero">
-    <div class="overlay"></div>
+  <!-- Particules étoiles -->
+  <div id="tsparticles"></div>
 
-    <div class="hero-content animate__animated animate__fadeIn">
-      <h1 class="text-6xl md:text-7xl font-bold mb-6 animate__animated animate__fadeInDown animate__delay-1s">
-        Nord Évasion 59
-      </h1>
-      <p class="text-2xl md:text-3xl mb-10 animate__animated animate__fadeInUp animate__delay-2s">
-        Explorez le monde. Vivez l’aventure. Créez vos souvenirs.
-      </p>
-      <button onclick="window.location.href='sejours.html'" 
-              class="btn-cta bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-lg text-xl animate__animated animate__bounce animate__delay-3s">
-        Rejoins l’aventure
-      </button>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="overlay-glow"></div>
+    <div class="hero-content">
+      <h1 id="main-title" class="text-6xl md:text-7xl font-bold mb-6">Nord Évasion 59</h1>
+      <p id="main-slogan" class="text-2xl md:text-3xl mb-10">Partez à la découverte des plus beaux paysages et vivez des expériences inoubliables !</p>
+      <button onclick="window.location.href='sejours.html'" class="btn-cta" id="cta-btn">Rejoins l'aventure</button>
     </div>
   </section>
 
-  <!-- JS pour animations supplémentaires si besoin -->
+  <!-- tsParticles init -->
   <script>
-    // Exemple : bouton pulse infini après animation initiale
-    const btn = document.querySelector('.btn-cta');
-    btn.classList.add('animate__infinite', 'animate__pulse');
+    tsParticles.load("tsparticles", {
+      fpsLimit: 60,
+      background: {
+        color: "#0b0f2c"
+      },
+      particles: {
+        number: { value: 150 },
+        color: { value: ["#ffffff", "#ffddff", "#aabfff"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.8, random: true },
+        size: { value: { min: 1, max: 3 } },
+        move: {
+          enable: true,
+          speed: 0.4,
+          direction: "none",
+          outModes: "out"
+        }
+      },
+      interactivity: {
+        events: {
+          onHover: { enable: true, mode: "repulse" },
+          onClick: { enable: false }
+        }
+      },
+      detectRetina: true
+    });
+  </script>
+
+  <!-- GSAP animations -->
+  <script>
+    gsap.from("#main-title", { y: -100, opacity: 0, duration: 2, ease: "power3.out" });
+    gsap.from("#main-slogan", { y: 50, opacity: 0, duration: 2, delay: 1, ease: "power3.out" });
+    gsap.from("#cta-btn", { scale: 0.5, opacity: 0, duration: 1.5, delay: 2, ease: "elastic.out(1, 0.5)", repeat: -1, yoyo: true });
   </script>
 
 </body>
