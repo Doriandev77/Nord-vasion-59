@@ -27,7 +27,6 @@
 
   <main class="relative w-full h-screen flex items-center justify-center text-white ambient">
     
-    <!-- Bloc zoomé -->
     <div
       id="hero"
       class="text-center px-6 max-w-4xl transform scale-110 md:scale-125 opacity-0"
@@ -37,31 +36,54 @@
         Nord Évasion 59
       </h1>
 
-      <p class="text-xl md:text-3xl text-white/80 mb-16 leading-relaxed">
+      <p class="text-xl md:text-3xl text-white/80 mb-12 leading-relaxed">
         Des voyages accessibles, pensés pour profiter vraiment,<br class="hidden md:block">
         sans sacrifier la qualité.
       </p>
 
+      <!-- Champ prénom -->
+      <input
+        id="username"
+        type="text"
+        placeholder="Ton prénom"
+        class="w-full max-w-md mx-auto mb-10 px-6 py-4 bg-black border border-white/30 text-white text-center text-lg placeholder-white/40 focus:outline-none focus:border-white transition"
+      />
+
+      <!-- CTA -->
       <button
-        onclick="window.location.href='dashboard.html'"
+        onclick="startExperience()"
         class="inline-flex items-center gap-3 border border-white/40 px-10 py-5 text-base md:text-lg uppercase tracking-widest transition-all duration-300 hover:bg-white hover:text-black"
       >
         Partir à l’aventure
         <span>→</span>
       </button>
 
+      <p class="text-xs text-white/40 mt-6">
+        Aucune inscription. Données conservées uniquement sur votre appareil.
+      </p>
+
     </div>
   </main>
 
   <script>
-    // Zoom + fade in (effet proximité)
     window.onload = () => {
       const hero = document.getElementById('hero');
-
       hero.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
       hero.style.opacity = 1;
       hero.style.transform = 'scale(1)';
     };
+
+    function startExperience() {
+      const username = document.getElementById('username').value.trim();
+
+      if (!username) {
+        alert("Dis-nous juste ton prénom 🙂");
+        return;
+      }
+
+      localStorage.setItem("ne59_username", username);
+      window.location.href = "dashboard.html";
+    }
   </script>
 
 </body>
