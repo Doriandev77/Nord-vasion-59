@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   body { font-family: 'Inter', sans-serif; }
+  .card:hover img { transform: scale(1.05); transition: 0.4s; }
 </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
@@ -61,11 +62,11 @@
   <!-- Cartes voyages injectées par JS -->
 </section>
 
-<!-- Cart Modal avec réservation -->
+<!-- Panier et réservation -->
 <div id="cartModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 overflow-auto p-6">
-  <div class="bg-white w-full max-w-2xl rounded-xl p-6">
-    <h3 class="text-xl font-semibold mb-4">Votre panier & réservation</h3>
-    <ul id="cartItems" class="space-y-6"></ul>
+  <div class="bg-white w-full max-w-3xl rounded-xl p-6">
+    <h3 class="text-2xl font-semibold mb-4">Votre panier & réservation</h3>
+    <div id="cartItems" class="space-y-6"></div>
 
     <form id="bookingForm" class="mt-6 space-y-4">
       <label class="block">
@@ -73,135 +74,114 @@
         <input type="email" id="clientEmail" required
           class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none">
       </label>
-
       <button type="submit"
         class="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition">
         Envoyer mon devis
       </button>
     </form>
     <button onclick="toggleCart()" class="mt-4 w-full text-slate-600">Fermer</button>
-    <div class="flex justify-between mt-6 font-bold">
+    <div class="flex justify-between mt-6 font-bold text-lg">
       <span>Total</span>
       <span id="cartTotal">0 €</span>
     </div>
   </div>
 </div>
 
+<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-emailjs.init("YOUR_PUBLIC_KEY"); // Remplace par ta clé EmailJS
+emailjs.init("YOUR_PUBLIC_KEY"); // Ta clé EmailJS
 
-// Récup prénom
 const username = localStorage.getItem("ne59_username") || "Voyageur";
 document.getElementById("username").textContent = username;
 document.getElementById("usernameHero").textContent = username;
 
-// Voyages complets avec description
+// Voyages complets
 const trips = [
-  {id:"venise", title:"Carnaval de Venise", category:"International", duration:"long", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9", desc:"Découvrez le célèbre Carnaval de Venise et ses magnifiques masques traditionnels. Balades en gondole et soirées festives incluses."},
-  {id:"nice", title:"Carnaval de Nice & Menton", category:"International", duration:"long", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34", desc:"Partez admirer les magnifiques chars et animations du Carnaval de Nice, et découvrez la charmante ville de Menton."},
-  {id:"portugal", title:"Découverte du Portugal", category:"International", duration:"long", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad", desc:"Un voyage complet à travers le Portugal: Lisbonne, Porto et la côte atlantique. Culture, gastronomie et plages au rendez-vous."},
-  {id:"vienne", title:"Vienne & Budapest", category:"International", duration:"long", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Explorez les capitales impériales de Vienne et Budapest avec visites guidées et croisières sur le Danube."},
-  {id:"lourdes", title:"Lourdes & Pyrénées", category:"Montagne", duration:"long", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", desc:"Séjour montagne et spiritualité à Lourdes. Randonnées dans les Pyrénées et découverte culturelle de la région."},
-  {id:"versilia", title:"La Versilia – Côte Tyrrhénienne", category:"Mer", duration:"long", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb", desc:"Vacances sur la côte Tyrrhénienne avec plages et activités nautiques. Découverte de la gastronomie locale."},
-  {id:"tyrol", title:"Transhumance au Tyrol", category:"Montagne", duration:"long", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90", desc:"Séjour nature au Tyrol, randonnées et découverte des traditions locales de transhumance."},
-  {id:"rome", title:"Escapade Rome, Florence et Pise", category:"International", duration:"long", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Un tour culturel en Italie, de Rome à Florence et Pise, incluant visites des monuments emblématiques."},
-  {id:"lille_day", title:"Découverte de Lille", category:"City trip", duration:"journée", dates:"Samedi", price:95, image:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1", desc:"Une journée pour explorer Lille, ses musées, sa gastronomie et son patrimoine historique."},
-  {id:"bruxelles_day", title:"Bruxelles express", category:"City trip", duration:"journée", dates:"Dimanche", price:110, image:"https://images.unsplash.com/photo-1518684079-01b7a62d3d43", desc:"Excursion rapide à Bruxelles, avec visite de la Grand Place, dégustation de spécialités belges et temps libre."}
+  {id:"venise", title:"Carnaval de Venise", category:"International", duration:"long", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9", desc:"Découvrez le Carnaval de Venise avec balades en gondole et soirées festives."},
+  {id:"nice", title:"Carnaval de Nice & Menton", category:"International", duration:"long", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34", desc:"Admirez les chars du Carnaval de Nice et la charmante ville de Menton."},
+  {id:"portugal", title:"Découverte du Portugal", category:"International", duration:"long", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad", desc:"Voyage complet à Lisbonne, Porto et la côte atlantique, gastronomie et plages incluses."},
+  {id:"vienne", title:"Vienne & Budapest", category:"International", duration:"long", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Explorez Vienne et Budapest, capitales impériales avec visites guidées et croisières."},
+  {id:"lourdes", title:"Lourdes & Pyrénées", category:"Montagne", duration:"long", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", desc:"Séjour montagne et spiritualité avec randonnées dans les Pyrénées."},
+  {id:"versilia", title:"La Versilia – Côte Tyrrhénienne", category:"Mer", duration:"long", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb", desc:"Vacances sur la côte Tyrrhénienne avec plages et activités nautiques."},
+  {id:"tyrol", title:"Transhumance au Tyrol", category:"Montagne", duration:"long", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90", desc:"Séjour nature au Tyrol, randonnées et traditions locales."},
+  {id:"rome", title:"Escapade Rome, Florence et Pise", category:"International", duration:"long", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Tour culturel en Italie: Rome, Florence, Pise, monuments et gastronomie."},
+  {id:"lille_day", title:"Découverte de Lille", category:"City trip", duration:"journée", dates:"Samedi", price:95, image:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1", desc:"Une journée pour explorer Lille, ses musées et son patrimoine historique."},
+  {id:"bruxelles_day", title:"Bruxelles express", category:"City trip", duration:"journée", dates:"Dimanche", price:110, image:"https://images.unsplash.com/photo-1518684079-01b7a62d3d43", desc:"Excursion à Bruxelles avec visite de la Grand Place et dégustation de spécialités."}
 ];
 
-// Panier
+// Panier moderne
 let cart = JSON.parse(localStorage.getItem("ne59_cart")) || [];
 
-// Gestion panier
-function saveCart() {
-  localStorage.setItem("ne59_cart", JSON.stringify(cart));
-  document.getElementById("cartCount").textContent = cart.length;
-}
-function toggleCart() { document.getElementById("cartModal").classList.toggle("hidden"); renderCart(); }
-function addToCart(id) {
-  const trip = trips.find(t => t.id === id);
-  const exists = cart.find(item => item.id === id);
-  if(!exists) cart.push({...trip, qty:1, children:0});
-  else exists.qty +=1;
-  saveCart(); renderCart();
-}
-function removeFromCart(id) { cart = cart.filter(i=>i.id!==id); saveCart(); renderCart(); }
+function saveCart(){localStorage.setItem("ne59_cart",JSON.stringify(cart));document.getElementById("cartCount").textContent=cart.length;}
+function toggleCart(){document.getElementById("cartModal").classList.toggle("hidden");renderCart();}
+function addToCart(id){const trip=trips.find(t=>t.id===id);const exists=cart.find(i=>i.id===id);if(!exists)cart.push({...trip,qty:1,children:0});else exists.qty+=1;saveCart();renderCart();}
+function removeFromCart(id){cart=cart.filter(i=>i.id!==id);saveCart();renderCart();}
 
-// Rendu panier
-function renderCart() {
-  const list = document.getElementById("cartItems");
-  list.innerHTML = "";
-  let total = 0;
+function renderCart(){
+  const list=document.getElementById("cartItems");
+  list.innerHTML="";
+  let total=0;
   cart.forEach(item=>{
-    const adults = item.qty||1;
-    const children = item.children||0;
-    total += adults*item.price + children*(item.price*0.7);
-    const li = document.createElement("li");
+    const adults=item.qty||1;
+    const children=item.children||0;
+    total+=adults*item.price+children*(item.price*0.7);
+    const li=document.createElement("div");
     li.className="bg-slate-50 p-4 rounded-lg shadow";
-    li.innerHTML = `
+    li.innerHTML=`
       <div class="flex justify-between items-center">
-        <span class="font-semibold">${item.title} (${item.price} €)</span>
+        <span class="font-semibold">${item.title}</span>
         <button onclick="removeFromCart('${item.id}')" class="text-red-600 font-bold">✕</button>
       </div>
-      <div class="mt-2 space-y-2">
-        <label>Adultes
-          <input type="number" min="1" value="${adults}" class="w-20 border px-2 py-1 rounded" onchange="item.qty=parseInt(this.value); saveCart(); renderCart();">
-        </label>
-        <label>Enfants
-          <input type="number" min="0" value="${children}" class="w-20 border px-2 py-1 rounded" onchange="item.children=parseInt(this.value); saveCart(); renderCart();">
-        </label>
+      <div class="mt-2 flex gap-4 items-center">
+        <label>Adultes: <input type="number" min="1" value="${adults}" class="w-20 border px-2 py-1 rounded" onchange="item.qty=parseInt(this.value);saveCart();renderCart();"></label>
+        <label>Enfants: <input type="number" min="0" value="${children}" class="w-20 border px-2 py-1 rounded" onchange="item.children=parseInt(this.value);saveCart();renderCart();"></label>
       </div>
+      <p class="mt-2 font-semibold">Sous-total: ${adults*item.price+children*(item.price*0.7)} €</p>
     `;
     list.appendChild(li);
   });
-  document.getElementById("cartTotal").textContent = total + " €";
+  document.getElementById("cartTotal").textContent=total+" €";
 }
 
 // Rendu voyages
-function renderTrips() {
-  const list = document.getElementById("tripList");
-  list.innerHTML = "";
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const category = document.getElementById("categoryFilter").value;
-  const duration = document.getElementById("durationFilter").value;
+function renderTrips(){
+  const list=document.getElementById("tripList");
+  list.innerHTML="";
+  const search=document.getElementById("searchInput").value.toLowerCase();
+  const category=document.getElementById("categoryFilter").value;
+  const duration=document.getElementById("durationFilter").value;
 
-  trips.filter(t=>
-    t.title.toLowerCase().includes(search) &&
-    (category==="all"||t.category===category) &&
-    (duration==="all"||t.duration===duration)
-  ).forEach(trip=>{
-    const card = document.createElement("div");
-    card.className="bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden group";
-    card.innerHTML = `
-      <div class="h-48 bg-cover bg-center relative" style="background-image:url('${trip.image}')">
-        <span class="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">${trip.duration==='journée'?'#Journée':'#LongSéjour'}</span>
-      </div>
-      <div class="p-6">
-        <span class="text-sm text-blue-600 font-medium">${trip.category}</span>
-        <h3 class="text-xl font-semibold mt-2">${trip.title}</h3>
-        <p class="text-slate-500 text-sm mt-1">${trip.dates}</p>
-        <p class="text-slate-700 text-sm mt-2">${trip.desc}</p>
-        <p class="text-blue-600 font-bold mt-4">${trip.price} €</p>
-        <button onclick="addToCart('${trip.id}')"
-          class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-          Ajouter au panier
-        </button>
-      </div>
-    `;
-    list.appendChild(card);
-  });
+  trips.filter(t=>t.title.toLowerCase().includes(search)&&(category==="all"||t.category===category)&&(duration==="all"||t.duration===duration))
+    .forEach(trip=>{
+      const card=document.createElement("div");
+      card.className="card bg-white rounded-xl shadow hover:shadow-xl overflow-hidden";
+      card.innerHTML=`
+        <div class="h-48 bg-cover bg-center relative" style="background-image:url('${trip.image}')">
+          <span class="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">${trip.duration==='journée'?'#Journée':'#LongSéjour'}</span>
+        </div>
+        <div class="p-6">
+          <span class="text-sm text-blue-600 font-medium">${trip.category}</span>
+          <h3 class="text-xl font-semibold mt-2">${trip.title}</h3>
+          <p class="text-slate-500 text-sm mt-1">${trip.dates}</p>
+          <p class="text-slate-700 text-sm mt-2">${trip.desc}</p>
+          <p class="text-blue-600 font-bold mt-4">${trip.price} €</p>
+          <button onclick="addToCart('${trip.id}')" class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Ajouter au panier</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
 }
 
 // Envoi devis
-document.getElementById("bookingForm").addEventListener("submit", function(e){
+document.getElementById("bookingForm").addEventListener("submit",function(e){
   e.preventDefault();
-  const email = document.getElementById("clientEmail").value;
-  let message = `Devis Nord Évasion 59 pour ${email}\n\n`;
+  const email=document.getElementById("clientEmail").value;
+  let message=`Devis Nord Évasion 59 pour ${email}\n\n`;
   cart.forEach(item=>{
-    const adults = item.qty||1;
-    const children = item.children||0;
-    message += `${item.title}\n  Adultes: ${adults}\n  Enfants: ${children}\n  Prix total: ${adults*item.price+children*(item.price*0.7)} €\n\n`;
+    const adults=item.qty||1;
+    const children=item.children||0;
+    message+=`${item.title}\n Adultes: ${adults}\n Enfants: ${children}\n Sous-total: ${adults*item.price+children*(item.price*0.7)} €\n\n`;
   });
   emailjs.send("service_xxx","template_xxx",{message,to_email:"AGENCE_EMAIL@exemple.com"})
     .then(res=>alert("Devis envoyé avec succès !"))
@@ -209,9 +189,9 @@ document.getElementById("bookingForm").addEventListener("submit", function(e){
   toggleCart();
 });
 
-// Init
-renderTrips(); saveCart();
+// Initialisation
+renderTrips();
+saveCart();
 </script>
-
 </body>
 </html>
