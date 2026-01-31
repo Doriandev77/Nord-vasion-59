@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard – Nord Évasion 59</title>
+<title>Nord Évasion 59 – Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -33,10 +33,10 @@
   </div>
 </section>
 
-<!-- Search & Filters -->
+<!-- Filters -->
 <section class="max-w-7xl mx-auto px-8 -mt-10 relative z-20">
-  <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-4">
-    <input id="searchInput" type="text" placeholder="Rechercher une destination..."
+  <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-4 flex-wrap items-center justify-between">
+    <input id="searchInput" type="text" placeholder="Rechercher un séjour..."
       class="flex-1 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none"
       oninput="renderTrips()">
 
@@ -45,48 +45,71 @@
       <option value="Mer">Mer</option>
       <option value="Montagne">Montagne</option>
       <option value="International">International</option>
+      <option value="City trip">City trip</option>
+    </select>
+
+    <select id="durationFilter" class="border border-slate-200 rounded-lg px-4 py-3" onchange="renderTrips()">
+      <option value="all">#Tous les séjours</option>
+      <option value="journée">#Journée</option>
+      <option value="long">#LongSéjour</option>
     </select>
   </div>
 </section>
 
 <!-- Trips Grid -->
 <section class="max-w-7xl mx-auto px-8 py-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8" id="tripList">
-  <!-- Les cartes seront injectées par JS -->
+  <!-- Cartes voyages injectées par JS -->
 </section>
 
-<!-- Cart Modal -->
-<div id="cartModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
-  <div class="bg-white w-full max-w-md rounded-xl p-6">
-    <h3 class="text-xl font-semibold mb-4">Votre panier</h3>
-    <ul id="cartItems" class="space-y-3"></ul>
+<!-- Cart Modal avec réservation -->
+<div id="cartModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 overflow-auto p-6">
+  <div class="bg-white w-full max-w-2xl rounded-xl p-6">
+    <h3 class="text-xl font-semibold mb-4">Votre panier & réservation</h3>
+    <ul id="cartItems" class="space-y-6"></ul>
+
+    <form id="bookingForm" class="mt-6 space-y-4">
+      <label class="block">
+        <span class="font-medium">Email de contact</span>
+        <input type="email" id="clientEmail" required
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none">
+      </label>
+
+      <button type="submit"
+        class="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition">
+        Envoyer mon devis
+      </button>
+    </form>
+    <button onclick="toggleCart()" class="mt-4 w-full text-slate-600">Fermer</button>
     <div class="flex justify-between mt-6 font-bold">
       <span>Total</span>
       <span id="cartTotal">0 €</span>
     </div>
-    <button onclick="toggleCart()" class="mt-6 w-full bg-blue-700 text-white py-3 rounded-lg">
-      Fermer
-    </button>
   </div>
 </div>
 
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
+emailjs.init("YOUR_PUBLIC_KEY"); // Remplace par ta clé EmailJS
+
 // Récup prénom et pays
 const username = localStorage.getItem("ne59_username") || "Voyageur";
 const selectedCountry = localStorage.getItem("ne59_country") || null;
-
 document.getElementById("username").textContent = username;
 document.getElementById("usernameHero").textContent = username;
 
-// Voyages avec images et pays
+// Voyages complets
 const trips = [
-  {id:"venise", title:"Carnaval de Venise", country:"Italie", category:"International", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9"},
-  {id:"nice", title:"Carnaval de Nice & Menton", country:"France", category:"International", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"},
-  {id:"portugal", title:"Découverte du Portugal", country:"Portugal", category:"International", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad"},
-  {id:"vienne", title:"Vienne & Budapest", country:"Autriche", category:"International", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba"},
-  {id:"lourdes", title:"Lourdes & Pyrénées", country:"France", category:"Montagne", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"},
-  {id:"versilia", title:"La Versilia – Côte Tyrrhénienne", country:"Italie", category:"Mer", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb"},
-  {id:"tyrol", title:"Transhumance au Tyrol", country:"Autriche", category:"Montagne", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90"},
-  {id:"rome", title:"Escapade Rome, Florence et Pise", country:"Italie", category:"International", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba"}
+  {id:"venise", title:"Carnaval de Venise", country:"Italie", category:"International", duration:"long", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9"},
+  {id:"nice", title:"Carnaval de Nice & Menton", country:"France", category:"International", duration:"long", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"},
+  {id:"portugal", title:"Découverte du Portugal", country:"Portugal", category:"International", duration:"long", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad"},
+  {id:"vienne", title:"Vienne & Budapest", country:"Autriche", category:"International", duration:"long", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba"},
+  {id:"lourdes", title:"Lourdes & Pyrénées", country:"France", category:"Montagne", duration:"long", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"},
+  {id:"versilia", title:"La Versilia – Côte Tyrrhénienne", country:"Italie", category:"Mer", duration:"long", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb"},
+  {id:"tyrol", title:"Transhumance au Tyrol", country:"Autriche", category:"Montagne", duration:"long", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90"},
+  {id:"rome", title:"Escapade Rome, Florence et Pise", country:"Italie", category:"International", duration:"long", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba"},
+  {id:"lille_day", title:"Découverte de Lille", country:"France", category:"City trip", duration:"journée", dates:"Samedi", price:95, image:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1"},
+  {id:"bruxelles_day", title:"Bruxelles express", country:"Belgique", category:"City trip", duration:"journée", dates:"Dimanche", price:110, image:"https://images.unsplash.com/photo-1518684079-01b7a62d3d43"}
 ];
 
 // Panier
@@ -97,38 +120,82 @@ function saveCart() {
   document.getElementById("cartCount").textContent = cart.length;
 }
 
+// Panier modal
 function toggleCart() {
   document.getElementById("cartModal").classList.toggle("hidden");
   renderCart();
 }
 
+// Ajouter au panier
 function addToCart(id) {
-  if (!cart.includes(id)) cart.push(id);
-  saveCart();
-}
-
-function removeFromCart(id) {
-  cart = cart.filter(i => i !== id);
+  const trip = trips.find(t => t.id === id);
+  const exists = cart.find(item => item.id === id);
+  if (!exists) {
+    cart.push({...trip, qty:1, children:0});
+  } else {
+    exists.qty +=1;
+  }
   saveCart();
   renderCart();
 }
 
-// Affichage des voyages filtrés
+// Supprimer du panier
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  saveCart();
+  renderCart();
+}
+
+// Rendu du panier
+function renderCart() {
+  const list = document.getElementById("cartItems");
+  list.innerHTML = "";
+  let total = 0;
+  cart.forEach(item => {
+    const adults = item.qty || 1;
+    const children = item.children || 0;
+    total += adults*item.price + children*(item.price*0.7);
+    const li = document.createElement("li");
+    li.className = "bg-slate-50 p-4 rounded-lg shadow";
+    li.innerHTML = `
+      <div class="flex justify-between items-center">
+        <span class="font-semibold">${item.title} (${item.price} €)</span>
+        <button onclick="removeFromCart('${item.id}')" class="text-red-600 font-bold">✕</button>
+      </div>
+      <div class="mt-2 space-y-2">
+        <label>Adultes
+          <input type="number" min="1" value="${adults}" class="w-20 border px-2 py-1 rounded" onchange="item.qty = parseInt(this.value); saveCart(); renderCart();">
+        </label>
+        <label>Enfants
+          <input type="number" min="0" value="${children}" class="w-20 border px-2 py-1 rounded" onchange="item.children = parseInt(this.value); saveCart(); renderCart();">
+        </label>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+  document.getElementById("cartTotal").textContent = total + " €";
+}
+
+// Rendu voyages
 function renderTrips() {
   const list = document.getElementById("tripList");
   list.innerHTML = "";
   const search = document.getElementById("searchInput").value.toLowerCase();
   const category = document.getElementById("categoryFilter").value;
+  const duration = document.getElementById("durationFilter").value;
 
   trips.filter(t => 
     t.country === selectedCountry &&
     t.title.toLowerCase().includes(search) &&
-    (category === "all" || t.category === category)
+    (category === "all" || t.category === category) &&
+    (duration === "all" || t.duration === duration)
   ).forEach(trip => {
     const card = document.createElement("div");
-    card.className = "bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden";
+    card.className = "bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden group";
     card.innerHTML = `
-      <div class="h-48 bg-cover bg-center" style="background-image:url('${trip.image}')"></div>
+      <div class="h-48 bg-cover bg-center relative" style="background-image:url('${trip.image}')">
+        <span class="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">${trip.duration === 'journée' ? '#Journée' : '#LongSéjour'}</span>
+      </div>
       <div class="p-6">
         <span class="text-sm text-blue-600 font-medium">${trip.category}</span>
         <h3 class="text-xl font-semibold mt-2">${trip.title}</h3>
@@ -144,24 +211,24 @@ function renderTrips() {
   });
 }
 
-// Affichage panier
-function renderCart() {
-  const list = document.getElementById("cartItems");
-  list.innerHTML = "";
-  let total = 0;
-  cart.forEach(id => {
-    const trip = trips.find(t => t.id === id);
-    total += trip.price;
-    const li = document.createElement("li");
-    li.className = "flex justify-between items-center";
-    li.innerHTML = `
-      <span>${trip.title} — ${trip.price} €</span>
-      <button onclick="removeFromCart('${id}')" class="text-red-600">✕</button>
-    `;
-    list.appendChild(li);
+// Envoi devis
+document.getElementById("bookingForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const email = document.getElementById("clientEmail").value;
+
+  let message = `Devis Nord Évasion 59 pour ${email}\n\n`;
+  cart.forEach(item=>{
+    const adults = item.qty || 1;
+    const children = item.children || 0;
+    message += `${item.title}\n  Adultes: ${adults}\n  Enfants: ${children}\n  Prix total: ${adults*item.price + children*(item.price*0.7)} €\n\n`;
   });
-  document.getElementById("cartTotal").textContent = total + " €";
-}
+
+  emailjs.send("service_xxx","template_xxx",{message, to_email:"AGENCE_EMAIL@exemple.com"})
+    .then(res=>alert("Devis envoyé avec succès !"))
+    .catch(err=>alert("Erreur envoi: "+err));
+
+  toggleCart();
+});
 
 // Initialisation
 renderTrips();
