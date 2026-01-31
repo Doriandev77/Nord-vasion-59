@@ -4,55 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard – Nord Évasion 59</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
   body { font-family: 'Inter', sans-serif; }
 </style>
 </head>
-
 <body class="bg-slate-100 text-slate-800">
 
 <!-- Header -->
-<header class="bg-white sticky top-0 z-40 shadow-sm">
-  <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-blue-600">Nord Évasion 59</h1>
-
-    <button onclick="toggleCart()" class="relative text-blue-600 font-medium">
-      Panier
-      <span id="cartCount" class="absolute -top-2 -right-3 bg-blue-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+<header class="bg-white sticky top-0 shadow px-8 py-4 flex justify-between items-center z-50">
+  <h1 class="text-2xl font-bold text-blue-700">Nord Évasion 59</h1>
+  <div class="flex items-center gap-6">
+    <span class="text-slate-600">Bonjour <strong id="username"></strong> 👋</span>
+    <button onclick="toggleCart()" class="relative text-blue-700 font-semibold">
+      Panier 🛒
+      <span id="cartCount" class="absolute -top-2 -right-3 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
     </button>
   </div>
 </header>
 
 <!-- Hero -->
-<section class="relative h-[40vh] bg-cover bg-center"
-style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');">
+<section class="relative h-[30vh] md:h-[40vh] bg-cover bg-center"
+  style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');">
   <div class="absolute inset-0 bg-black/40"></div>
-
   <div class="relative z-10 h-full flex items-center max-w-7xl mx-auto px-8">
-    <div>
-      <h2 class="text-white text-4xl md:text-5xl font-bold mb-4">
-        Bienvenue <span id="username"></span> 👋
-      </h2>
-      <p class="text-white/80 text-xl">
-        Où part-on cette année ?
-      </p>
-    </div>
+    <h2 class="text-white text-3xl md:text-5xl font-bold">Bienvenue <span id="usernameHero"></span> 👋</h2>
   </div>
 </section>
 
-<!-- Search -->
+<!-- Search & Filters -->
 <section class="max-w-7xl mx-auto px-8 -mt-10 relative z-20">
   <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-4">
     <input id="searchInput" type="text" placeholder="Rechercher une destination..."
       class="flex-1 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none"
       oninput="renderTrips()">
 
-    <select id="categoryFilter" class="border border-slate-200 rounded-lg px-4 py-3"
-      onchange="renderTrips()">
+    <select id="categoryFilter" class="border border-slate-200 rounded-lg px-4 py-3" onchange="renderTrips()">
       <option value="all">Toutes catégories</option>
       <option value="Mer">Mer</option>
       <option value="Montagne">Montagne</option>
@@ -61,10 +49,12 @@ style="background-image:url('https://images.unsplash.com/photo-1507525428034-b72
   </div>
 </section>
 
-<!-- Trips -->
-<section class="max-w-7xl mx-auto px-8 py-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8" id="tripList"></section>
+<!-- Trips Grid -->
+<section class="max-w-7xl mx-auto px-8 py-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8" id="tripList">
+  <!-- Les cartes seront injectées par JS -->
+</section>
 
-<!-- Cart -->
+<!-- Cart Modal -->
 <div id="cartModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
   <div class="bg-white w-full max-w-md rounded-xl p-6">
     <h3 class="text-xl font-semibold mb-4">Votre panier</h3>
@@ -73,61 +63,65 @@ style="background-image:url('https://images.unsplash.com/photo-1507525428034-b72
       <span>Total</span>
       <span id="cartTotal">0 €</span>
     </div>
-    <button onclick="toggleCart()" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg">
+    <button onclick="toggleCart()" class="mt-6 w-full bg-blue-700 text-white py-3 rounded-lg">
       Fermer
     </button>
   </div>
 </div>
 
 <script>
+// Récup prénom et pays
+const username = localStorage.getItem("ne59_username") || "Voyageur";
+const selectedCountry = localStorage.getItem("ne59_country") || null;
+
+document.getElementById("username").textContent = username;
+document.getElementById("usernameHero").textContent = username;
+
+// Voyages avec images et pays
 const trips = [
-  {
-    id: "venise",
-    title: "Carnaval de Venise",
-    dates: "11 – 16 février 2026",
-    price: 780,
-    category: "International",
-    image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9"
-  },
-  {
-    id: "nice",
-    title: "Carnaval de Nice & Menton",
-    dates: "18 – 23 février 2026",
-    price: 765,
-    category: "International",
-    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
-  },
-  {
-    id: "portugal",
-    title: "Découverte du Portugal",
-    dates: "8 – 18 mai",
-    price: 1610,
-    category: "International",
-    image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad"
-  },
-  {
-    id: "lourdes",
-    title: "Lourdes & Pyrénées",
-    dates: "26 juillet – 2 août",
-    price: 545,
-    category: "Montagne",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-  }
+  {id:"venise", title:"Carnaval de Venise", country:"Italie", category:"International", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9"},
+  {id:"nice", title:"Carnaval de Nice & Menton", country:"France", category:"International", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"},
+  {id:"portugal", title:"Découverte du Portugal", country:"Portugal", category:"International", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad"},
+  {id:"vienne", title:"Vienne & Budapest", country:"Autriche", category:"International", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba"},
+  {id:"lourdes", title:"Lourdes & Pyrénées", country:"France", category:"Montagne", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"},
+  {id:"versilia", title:"La Versilia – Côte Tyrrhénienne", country:"Italie", category:"Mer", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb"},
+  {id:"tyrol", title:"Transhumance au Tyrol", country:"Autriche", category:"Montagne", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90"},
+  {id:"rome", title:"Escapade Rome, Florence et Pise", country:"Italie", category:"International", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba"}
 ];
 
-const username = localStorage.getItem("ne59_username") || "";
-document.getElementById("username").textContent = username;
-
+// Panier
 let cart = JSON.parse(localStorage.getItem("ne59_cart")) || [];
 
+function saveCart() {
+  localStorage.setItem("ne59_cart", JSON.stringify(cart));
+  document.getElementById("cartCount").textContent = cart.length;
+}
+
+function toggleCart() {
+  document.getElementById("cartModal").classList.toggle("hidden");
+  renderCart();
+}
+
+function addToCart(id) {
+  if (!cart.includes(id)) cart.push(id);
+  saveCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i !== id);
+  saveCart();
+  renderCart();
+}
+
+// Affichage des voyages filtrés
 function renderTrips() {
   const list = document.getElementById("tripList");
   list.innerHTML = "";
-
   const search = document.getElementById("searchInput").value.toLowerCase();
   const category = document.getElementById("categoryFilter").value;
 
-  trips.filter(t =>
+  trips.filter(t => 
+    t.country === selectedCountry &&
     t.title.toLowerCase().includes(search) &&
     (category === "all" || t.category === category)
   ).forEach(trip => {
@@ -150,18 +144,28 @@ function renderTrips() {
   });
 }
 
-function addToCart(id) {
-  if (!cart.includes(id)) cart.push(id);
-  localStorage.setItem("ne59_cart", JSON.stringify(cart));
-  document.getElementById("cartCount").textContent = cart.length;
+// Affichage panier
+function renderCart() {
+  const list = document.getElementById("cartItems");
+  list.innerHTML = "";
+  let total = 0;
+  cart.forEach(id => {
+    const trip = trips.find(t => t.id === id);
+    total += trip.price;
+    const li = document.createElement("li");
+    li.className = "flex justify-between items-center";
+    li.innerHTML = `
+      <span>${trip.title} — ${trip.price} €</span>
+      <button onclick="removeFromCart('${id}')" class="text-red-600">✕</button>
+    `;
+    list.appendChild(li);
+  });
+  document.getElementById("cartTotal").textContent = total + " €";
 }
 
-function toggleCart() {
-  document.getElementById("cartModal").classList.toggle("hidden");
-}
-
+// Initialisation
 renderTrips();
-document.getElementById("cartCount").textContent = cart.length;
+saveCart();
 </script>
 
 </body>
