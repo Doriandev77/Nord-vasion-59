@@ -3,55 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nord Évasion 59 – Dashboard</title>
+<title>Nord Évasion 59 – L’aventure ultime</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Inter', sans-serif; }
-.card:hover img { transform: scale(1.05); transition: 0.4s; }
-.menu-link:hover { color: #1D4ED8; font-weight: 600; }
+body { font-family: 'Inter', sans-serif; overflow-x:hidden; }
+.menu-link:hover { color:#1D4ED8; font-weight:600; transition:0.3s; }
+.card:hover { transform: translateY(-5px) scale(1.03); transition:0.5s; }
+.card img { transition: transform 0.5s; }
+#heroText { text-shadow: 0 0 20px rgba(0,0,0,0.7); }
 </style>
 </head>
-<body class="bg-slate-100 text-slate-800">
+<body class="bg-slate-900 text-white">
 
-<!-- Header / Menu -->
-<header class="bg-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-    <h1 class="text-2xl font-bold text-blue-700">Nord Évasion 59</h1>
-    <nav class="flex gap-6 items-center">
-      <a href="#ajouter" class="menu-link">Ajouter</a>
-      <a href="#devenir-membre" class="menu-link">Devenir membre</a>
-      <a href="#nous-contacter" class="menu-link">Nous contacter</a>
-      <a href="#le-bureau" class="menu-link">Le bureau</a>
-      <a href="#nos-partenaires" class="menu-link">Nos partenaires</a>
-      <button onclick="toggleCart()" class="relative text-blue-700 font-semibold">
-        Panier 🛒
-        <span id="cartCount" class="absolute -top-2 -right-3 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
-      </button>
-    </nav>
-  </div>
-</header>
-
-<!-- Hero -->
-<section class="relative h-[35vh] md:h-[50vh] bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');">
-  <div class="absolute inset-0 bg-black/50"></div>
-  <div class="relative z-10 max-w-7xl mx-auto h-full flex flex-col justify-center items-start px-6">
-    <h2 class="text-white text-4xl md:text-6xl font-bold mb-4">Voyager à prix réduit pour des voyages qualitatifs</h2>
-    <button onclick="document.getElementById('tripSection').scrollIntoView({behavior:'smooth'})"
-      class="bg-blue-700 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-800 transition">
-      Partir à l’aventure
-    </button>
-  </div>
+<!-- Hero & Particles -->
+<div id="tsparticles" class="absolute inset-0 z-0"></div>
+<section class="relative h-screen flex flex-col justify-center items-center text-center px-6">
+  <h1 id="heroText" class="text-5xl md:text-7xl font-extrabold mb-6">Nord Évasion 59</h1>
+  <p class="text-xl md:text-2xl mb-6">Voyager à prix réduit pour des voyages qualitatifs</p>
+  <button onclick="document.getElementById('tripSection').scrollIntoView({behavior:'smooth'})"
+    class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full text-xl font-bold animate-pulse">
+    Partir à l’aventure
+  </button>
 </section>
 
-<!-- Filtres voyages -->
-<section id="tripSection" class="max-w-7xl mx-auto px-6 py-10">
-  <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-4 flex-wrap items-center justify-between">
-    <input id="searchInput" type="text" placeholder="Rechercher un séjour..."
-      class="flex-1 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none"
-      oninput="renderTrips()">
+<!-- Menu -->
+<header class="fixed w-full top-0 z-50 bg-black/40 backdrop-blur-md px-6 py-4 flex justify-between items-center">
+  <h2 class="text-2xl font-bold text-blue-400">Nord Évasion 59</h2>
+  <nav class="flex gap-6 items-center text-white font-semibold">
+    <a href="#ajouter" class="menu-link">Ajouter</a>
+    <a href="#devenir-membre" class="menu-link">Devenir membre</a>
+    <a href="#nous-contacter" class="menu-link">Nous contacter</a>
+    <a href="#le-bureau" class="menu-link">Le bureau</a>
+    <a href="#nos-partenaires" class="menu-link">Nos partenaires</a>
+    <button onclick="toggleCart()" class="relative text-blue-400 font-bold">
+      🛒 Panier
+      <span id="cartCount" class="absolute -top-2 -right-3 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+    </button>
+  </nav>
+</header>
 
-    <select id="categoryFilter" class="border border-slate-200 rounded-lg px-4 py-3" onchange="renderTrips()">
+<!-- Filtres & Voyages -->
+<section id="tripSection" class="max-w-7xl mx-auto px-6 py-16">
+  <div class="bg-white/10 rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-4 flex-wrap items-center justify-between backdrop-blur-md">
+    <input id="searchInput" type="text" placeholder="Rechercher un séjour..." 
+      class="flex-1 border border-white/40 bg-white/5 rounded-lg px-4 py-3 focus:outline-none" oninput="renderTrips()">
+
+    <select id="categoryFilter" class="border border-white/40 bg-white/5 rounded-lg px-4 py-3" onchange="renderTrips()">
       <option value="all">Toutes catégories</option>
       <option value="Mer">Mer</option>
       <option value="Montagne">Montagne</option>
@@ -59,37 +58,32 @@ body { font-family: 'Inter', sans-serif; }
       <option value="City trip">City trip</option>
     </select>
 
-    <select id="durationFilter" class="border border-slate-200 rounded-lg px-4 py-3" onchange="renderTrips()">
+    <select id="durationFilter" class="border border-white/40 bg-white/5 rounded-lg px-4 py-3" onchange="renderTrips()">
       <option value="all">#Tous les séjours</option>
       <option value="journée">#Journée</option>
       <option value="long">#LongSéjour</option>
     </select>
   </div>
+
+  <!-- Voyages Grid -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8" id="tripList"></div>
 </section>
 
-<!-- Voyages -->
-<section class="max-w-7xl mx-auto px-6 py-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8" id="tripList">
-  <!-- Voyages injectés via JS -->
-</section>
-
-<!-- Panier & Réservation -->
-<div id="cartModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 overflow-auto p-6">
-  <div class="bg-white w-full max-w-3xl rounded-xl p-6">
-    <h3 class="text-2xl font-semibold mb-4">Votre panier & réservation</h3>
-    <div id="cartItems" class="space-y-6"></div>
-
+<!-- Panier futuriste -->
+<div id="cartModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 overflow-auto p-6">
+  <div class="bg-slate-900 text-white w-full max-w-3xl rounded-xl p-6 shadow-2xl">
+    <h3 class="text-2xl font-bold mb-4 text-blue-400">Votre panier & réservation</h3>
+    <div id="cartItems" class="space-y-4"></div>
     <form id="bookingForm" class="mt-6 space-y-4">
       <label class="block">
-        <span class="font-medium">Email de contact</span>
-        <input type="email" id="clientEmail" required
-          class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none">
+        <span>Email de contact</span>
+        <input type="email" id="clientEmail" required class="w-full px-3 py-2 rounded-lg bg-white text-black">
       </label>
-      <button type="submit"
-        class="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition">
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-bold transition-all">
         Envoyer mon devis
       </button>
     </form>
-    <button onclick="toggleCart()" class="mt-4 w-full text-slate-600">Fermer</button>
+    <button onclick="toggleCart()" class="mt-4 w-full text-slate-400 hover:text-white">Fermer</button>
     <div class="flex justify-between mt-6 font-bold text-lg">
       <span>Total</span>
       <span id="cartTotal">0 €</span>
@@ -99,20 +93,20 @@ body { font-family: 'Inter', sans-serif; }
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-emailjs.init("YOUR_PUBLIC_KEY"); // Remplace par ta clé EmailJS
+emailjs.init("YOUR_PUBLIC_KEY");
 
-// Voyages complets
+// Voyages
 const trips = [
-  {id:"venise", title:"Carnaval de Venise", category:"International", duration:"long", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9", desc:"Découvrez le Carnaval de Venise avec balades en gondole et soirées festives."},
-  {id:"nice", title:"Carnaval de Nice & Menton", category:"International", duration:"long", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34", desc:"Admirez les chars du Carnaval de Nice et la charmante ville de Menton."},
-  {id:"portugal", title:"Découverte du Portugal", category:"International", duration:"long", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad", desc:"Voyage complet à Lisbonne, Porto et la côte atlantique, gastronomie et plages incluses."},
-  {id:"vienne", title:"Vienne & Budapest", category:"International", duration:"long", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Explorez Vienne et Budapest, capitales impériales avec visites guidées et croisières."},
-  {id:"lourdes", title:"Lourdes & Pyrénées", category:"Montagne", duration:"long", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", desc:"Séjour montagne et spiritualité avec randonnées dans les Pyrénées."},
-  {id:"versilia", title:"La Versilia – Côte Tyrrhénienne", category:"Mer", duration:"long", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb", desc:"Vacances sur la côte Tyrrhénienne avec plages et activités nautiques."},
-  {id:"tyrol", title:"Transhumance au Tyrol", category:"Montagne", duration:"long", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90", desc:"Séjour nature au Tyrol, randonnées et traditions locales."},
-  {id:"rome", title:"Escapade Rome, Florence et Pise", category:"International", duration:"long", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Tour culturel en Italie: Rome, Florence, Pise, monuments et gastronomie."},
-  {id:"lille_day", title:"Découverte de Lille", category:"City trip", duration:"journée", dates:"Samedi", price:95, image:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1", desc:"Une journée pour explorer Lille, ses musées et son patrimoine historique."},
-  {id:"bruxelles_day", title:"Bruxelles express", category:"City trip", duration:"journée", dates:"Dimanche", price:110, image:"https://images.unsplash.com/photo-1518684079-01b7a62d3d43", desc:"Excursion à Bruxelles avec visite de la Grand Place et dégustation de spécialités."}
+{id:"venise", title:"Carnaval de Venise", category:"International", duration:"long", dates:"11-16 février", price:780, image:"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9", desc:"Balades en gondole et soirées festives."},
+{id:"nice", title:"Carnaval de Nice & Menton", category:"International", duration:"long", dates:"18-23 février", price:765, image:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34", desc:"Admirez les chars du Carnaval de Nice et la ville de Menton."},
+{id:"portugal", title:"Découverte du Portugal", category:"International", duration:"long", dates:"8-18 mai", price:1610, image:"https://images.unsplash.com/photo-1505761671935-60b3a7427bad", desc:"Lisbonne, Porto, côtes atlantiques, gastronomie et plages."},
+{id:"vienne", title:"Vienne & Budapest", category:"International", duration:"long", dates:"27 juin-4 juil", price:1275, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Capitales impériales avec visites guidées et croisières."},
+{id:"lourdes", title:"Lourdes & Pyrénées", category:"Montagne", duration:"long", dates:"26 juil-2 août", price:545, image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", desc:"Randonnées et spiritualité dans les Pyrénées."},
+{id:"versilia", title:"La Versilia – Côte Tyrrhénienne", category:"Mer", duration:"long", dates:"6-12 sept", price:855, image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb", desc:"Plages et activités nautiques."},
+{id:"tyrol", title:"Transhumance au Tyrol", category:"Montagne", duration:"long", dates:"23-30 sept", price:1065, image:"https://images.unsplash.com/photo-1518659526055-5c148a6e1e90", desc:"Randonnées et traditions locales."},
+{id:"rome", title:"Escapade Rome, Florence et Pise", category:"International", duration:"long", dates:"26 oct-1 nov", price:930, image:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba", desc:"Tour culturel Italie: Rome, Florence, Pise."},
+{id:"lille_day", title:"Découverte de Lille", category:"City trip", duration:"journée", dates:"Samedi", price:95, image:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1", desc:"Exploration de Lille et son patrimoine."},
+{id:"bruxelles_day", title:"Bruxelles express", category:"City trip", duration:"journée", dates:"Dimanche", price:110, image:"https://images.unsplash.com/photo-1518684079-01b7a62d3d43", desc:"Visite de la Grand Place et spécialités belges."}
 ];
 
 // Panier
@@ -122,80 +116,70 @@ function toggleCart(){document.getElementById("cartModal").classList.toggle("hid
 function addToCart(id){const trip=trips.find(t=>t.id===id);const exists=cart.find(i=>i.id===id);if(!exists)cart.push({...trip,qty:1,children:0});else exists.qty+=1;saveCart();renderCart();}
 function removeFromCart(id){cart=cart.filter(i=>i.id!==id);saveCart();renderCart();}
 
-// Rendu panier
 function renderCart(){
-  const list=document.getElementById("cartItems");
-  list.innerHTML="";
-  let total=0;
-  cart.forEach(item=>{
-    const adults=item.qty||1; const children=item.children||0;
-    total+=adults*item.price+children*(item.price*0.7);
-    const li=document.createElement("div");
-    li.className="bg-slate-50 p-4 rounded-lg shadow";
-    li.innerHTML=`
-      <div class="flex justify-between items-center">
-        <span class="font-semibold">${item.title}</span>
-        <button onclick="removeFromCart('${item.id}')" class="text-red-600 font-bold">✕</button>
-      </div>
-      <div class="mt-2 flex gap-4 items-center">
-        <label>Adultes: <input type="number" min="1" value="${adults}" class="w-20 border px-2 py-1 rounded" onchange="item.qty=parseInt(this.value);saveCart();renderCart();"></label>
-        <label>Enfants: <input type="number" min="0" value="${children}" class="w-20 border px-2 py-1 rounded" onchange="item.children=parseInt(this.value);saveCart();renderCart();"></label>
-      </div>
-      <p class="mt-2 font-semibold">Sous-total: ${adults*item.price+children*(item.price*0.7)} €</p>
-    `;
-    list.appendChild(li);
-  });
-  document.getElementById("cartTotal").textContent=total+" €";
+const list=document.getElementById("cartItems");list.innerHTML="";let total=0;
+cart.forEach(item=>{
+const adults=item.qty||1; const children=item.children||0;
+total+=adults*item.price+children*(item.price*0.7);
+const li=document.createElement("div");
+li.className="bg-white/5 p-4 rounded-lg";
+li.innerHTML=`<div class="flex justify-between items-center">
+<span class="font-semibold">${item.title}</span>
+<button onclick="removeFromCart('${item.id}')" class="text-red-500 font-bold">✕</button>
+</div>
+<div class="mt-2 flex gap-4 items-center">
+<label>Adultes: <input type="number" min="1" value="${adults}" class="w-20 border px-2 py-1 rounded" onchange="item.qty=parseInt(this.value);saveCart();renderCart();"></label>
+<label>Enfants: <input type="number" min="0" value="${children}" class="w-20 border px-2 py-1 rounded" onchange="item.children=parseInt(this.value);saveCart();renderCart();"></label>
+</div>
+<p class="mt-2 font-semibold">Sous-total: ${adults*item.price+children*(item.price*0.7)} €</p>`;
+list.appendChild(li);
+});
+document.getElementById("cartTotal").textContent=total+" €";
 }
 
-// Rendu voyages
 function renderTrips(){
-  const list=document.getElementById("tripList");
-  list.innerHTML="";
-  const search=document.getElementById("searchInput").value.toLowerCase();
-  const category=document.getElementById("categoryFilter").value;
-  const duration=document.getElementById("durationFilter").value;
-
-  trips.filter(t=>t.title.toLowerCase().includes(search)&&(category==="all"||t.category===category)&&(duration==="all"||t.duration===duration))
-  .forEach(trip=>{
-    const card=document.createElement("div");
-    card.className="card bg-white rounded-xl shadow hover:shadow-xl overflow-hidden";
-    card.innerHTML=`
-      <div class="h-48 overflow-hidden relative">
-        <img src="${trip.image}" class="w-full h-full object-cover transition-transform">
-        <span class="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">${trip.duration==='journée'?'#Journée':'#LongSéjour'}</span>
-      </div>
-      <div class="p-6">
-        <span class="text-sm text-blue-600 font-medium">${trip.category}</span>
-        <h3 class="text-xl font-semibold mt-2">${trip.title}</h3>
-        <p class="text-slate-500 text-sm mt-1">${trip.dates}</p>
-        <p class="text-slate-700 text-sm mt-2">${trip.desc}</p>
-        <p class="text-blue-600 font-bold mt-4">${trip.price} €</p>
-        <button onclick="addToCart('${trip.id}')" class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Ajouter au panier</button>
-      </div>
-    `;
-    list.appendChild(card);
-  });
+const list=document.getElementById("tripList");list.innerHTML="";
+const search=document.getElementById("searchInput").value.toLowerCase();
+const category=document.getElementById("categoryFilter").value;
+const duration=document.getElementById("durationFilter").value;
+trips.filter(t=>t.title.toLowerCase().includes(search)&&(category==="all"||t.category===category)&&(duration==="all"||t.duration===duration))
+.forEach(trip=>{
+const card=document.createElement("div");card.className="card bg-white/5 rounded-xl shadow-lg overflow-hidden";
+card.innerHTML=`<div class="h-64 overflow-hidden relative rounded-t-xl"><img src="${trip.image}" class="w-full h-full object-cover"></div>
+<div class="p-6">
+<span class="text-sm text-blue-400 font-medium">${trip.category}</span>
+<h3 class="text-xl font-bold mt-2">${trip.title}</h3>
+<p class="text-slate-300 text-sm mt-1">${trip.dates}</p>
+<p class="text-slate-200 text-sm mt-2">${trip.desc}</p>
+<p class="text-blue-400 font-bold mt-4">${trip.price} €</p>
+<button onclick="addToCart('${trip.id}')" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-bold transition-all">Ajouter au panier</button>
+</div>`;
+list.appendChild(card);
+});
 }
 
 // Envoi devis
 document.getElementById("bookingForm").addEventListener("submit",function(e){
-  e.preventDefault();
-  const email=document.getElementById("clientEmail").value;
-  let message=`Devis Nord Évasion 59 pour ${email}\n\n`;
-  cart.forEach(item=>{
-    const adults=item.qty||1;
-    const children=item.children||0;
-    message+=`${item.title}\n Adultes: ${adults}\n Enfants: ${children}\n Sous-total: ${adults*item.price+children*(item.price*0.7)} €\n\n`;
-  });
-  emailjs.send("service_xxx","template_xxx",{message,to_email:"AGENCE_EMAIL@exemple.com"})
-    .then(res=>alert("Devis envoyé avec succès !"))
-    .catch(err=>alert("Erreur envoi: "+err));
-  toggleCart();
+e.preventDefault();
+const email=document.getElementById("clientEmail").value;
+let message=`Devis Nord Évasion 59 pour ${email}\n\n`;
+cart.forEach(item=>{const adults=item.qty||1;const children=item.children||0;message+=`${item.title}\n Adultes:${adults}\n Enfants:${children}\n Sous-total:${adults*item.price+children*(item.price*0.7)} €\n\n`;});
+emailjs.send("service_xxx","template_xxx",{message,to_email:"AGENCE_EMAIL@exemple.com"}).then(res=>alert("Devis envoyé !")).catch(err=>alert("Erreur:"+err));
+toggleCart();
 });
 
-// Initialisation
+// Init
 renderTrips(); saveCart();
+
+// Particules background
+tsParticles.load("tsparticles", {
+particles: {
+number:{value:100}, color:{value:"#ffffff"}, shape:{type:"circle"}, opacity:{value:0.1}, size:{value:3},
+move:{enable:true,speed:1,direction:"none",out_mode:"bounce"}
+},
+interactivity:{events:{onhover:{enable:true,mode:"repulse"}}},
+background:{color:"#0f172a"}
+});
 </script>
 </body>
 </html>
