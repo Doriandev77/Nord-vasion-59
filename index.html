@@ -3,172 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Audi RS3 2025</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-
+<title>Audi RS3 Luxury Rental</title>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+body, html{
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background:black;
+  font-family:'Inter', sans-serif;
 }
 
-body{
-background:#000;
-color:white;
-overflow:hidden;
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:9999;
+  display:block;
 }
 
-/* ===================== */
-/* INTRO */
-/* ===================== */
-
-.intro{
-position:fixed;
-width:100%;
-height:100vh;
-background:black;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-z-index:9999;
+.page{
+  display:none;
+  background:#111;
+  color:white;
+  min-height:100vh;
+  padding:50px 10%;
+  overflow-x:hidden;
 }
 
-/* PHARES */
-
-.headlights{
-position:absolute;
-width:100%;
-height:100%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 15%;
-pointer-events:none;
+h1{font-size:60px; margin-bottom:20px;}
+h2{font-size:40px; margin-bottom:20px;}
+p{color:#ccc; margin-bottom:40px;}
+input, select, button{
+  padding:15px;
+  font-size:16px;
+  border-radius:10px;
+  border:none;
 }
-
-.light{
-width:120px;
-height:30px;
-background:linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0));
-border-radius:50px;
-filter:blur(6px);
-opacity:0;
+button{
+  background:white;
+  color:black;
+  cursor:pointer;
+  font-weight:700;
 }
-
-.light.right{
-transform:scaleX(-1);
-}
-
-/* TEXTE */
-
-.letter{
-font-size:120px;
-font-weight:900;
-letter-spacing:10px;
-opacity:0;
-filter:blur(15px);
-transition:0.6s ease;
-}
-
-.final{
-opacity:0;
-font-size:120px;
-font-weight:900;
-letter-spacing:10px;
-}
-
-/* HERO */
-
-.hero{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#111;
-opacity:0;
-transition:1s ease;
-}
-
-.hero h1{
-font-size:70px;
-}
-
+.summary{margin-top:20px; font-size:18px; font-weight:600;}
 </style>
 </head>
 <body>
 
-<div class="intro">
+<canvas id="canvas"></canvas>
 
-<div class="headlights">
-<div class="light left"></div>
-<div class="light right"></div>
-</div>
-
-<div class="letter" id="letter"></div>
-<div class="final" id="final">RS3</div>
-
-</div>
-
-<section class="hero" id="hero">
+<div class="page" id="mainPage">
 <h1>Audi RS3 2025</h1>
-</section>
+<p>Le summum de la performance et du luxe. Réservez votre RS3 dès maintenant.</p>
+
+<h2>Réservation</h2>
+<form id="reservationForm">
+  <label>Début :</label>
+  <input type="date" id="startDate" required>
+  <label>Fin :</label>
+  <input type="date" id="endDate" required>
+  <select id="location">
+    <option>Paris</option>
+    <option>Monaco</option>
+    <option>Genève</option>
+  </select>
+  <button type="submit">Réserver</button>
+</form>
+<div class="summary" id="summary"></div>
+
+<h2>Tarifs</h2>
+<div>
+  <p>1 jour : 490€</p>
+  <p>2 jours : 950€</p>
+  <p>Week-end : 1200€</p>
+  <p>1 semaine : 3200€</p>
+</div>
+</div>
 
 <script>
+// ===============================
+// CANVAS & FAISCEAUX
+// ===============================
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-const letter = document.getElementById("letter");
-const finalText = document.getElementById("final");
-const hero = document.getElementById("hero");
-const lights = document.querySelectorAll(".light");
+const centerX = canvas.width/2;
+const centerY = canvas.height/2;
 
-const sequence = ["R", "S", "3"];
+// Définition des lettres R S 3 avec des points
+// Chaque point = [x, y] relatif
+const scale = 15;
+const letters = {
+  R:[[0,0],[0,1],[0,2],[0,3],[0,4],[1,0],[2,0],[2,1],[1,2],[2,2],[1,3],[2,4]],
+  S:[[0,0],[1,0],[2,0],[0,1],[0,2],[1,2],[2,2],[2,3],[0,4],[1,4],[2,4]],
+  "3":[[0,0],[1,0],[2,0],[2,1],[1,2],[2,2],[2,3],[0,4],[1,4],[2,4]]
+};
 
-function showLights(){
-lights.forEach(light=>{
-light.style.opacity="1";
+const sequence = ["R","S","3"];
+let drawnPoints = [];
+
+// Animation principale
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  ctx.shadowColor="white";
+  ctx.shadowBlur=15;
+  drawnPoints.forEach(pt=>{
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 6, 0, Math.PI*2);
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Animation séquentielle par lettre
+async function animateLetter(letterArray, offsetX){
+  return new Promise(resolve=>{
+    let i=0;
+    const interval = setInterval(()=>{
+      if(i>=letterArray.length){
+        clearInterval(interval);
+        resolve();
+        return;
+      }
+      const pt = letterArray[i];
+      drawnPoints.push({
+        x: centerX + (pt[0]-1)*scale*10 + offsetX,
+        y: centerY + (pt[1]-2)*scale*10
+      });
+      i++;
+    },100);
+  });
+}
+
+// Séquence complète
+async function animateSequence(){
+  let offset = -150;
+  for(let l of sequence){
+    await animateLetter(letters[l], offset);
+    offset += 150;
+  }
+  setTimeout(()=>{
+    // disparition du canvas
+    canvas.style.display="none";
+    document.getElementById("mainPage").style.display="block";
+    document.body.style.overflow="auto";
+  },800);
+}
+
+// Lancer l'animation
+animateSequence();
+
+// ===============================
+// FORMULAIRE RÉSERVATION
+// ===============================
+const form = document.getElementById("reservationForm");
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+  const start = new Date(document.getElementById("startDate").value);
+  const end = new Date(document.getElementById("endDate").value);
+  const diff = (end-start)/(1000*60*60*24)+1;
+  if(diff<=0 || diff>7){
+    document.getElementById("summary").innerText="Veuillez choisir 1 à 7 jours maximum.";
+    return;
+  }
+  const pricePerDay = 490;
+  const total = diff*pricePerDay;
+  document.getElementById("summary").innerText=`Durée : ${diff} jour(s)\nTotal : ${total} €`;
 });
-}
-
-function writeLetter(index){
-if(index >= sequence.length){
-letter.style.opacity="0";
-setTimeout(()=>{
-finalText.style.opacity="1";
-finalText.style.transform="scale(1.1)";
-},300);
-
-setTimeout(()=>{
-document.querySelector(".intro").style.opacity="0";
-hero.style.opacity="1";
-document.body.style.overflow="auto";
-},2000);
-
-return;
-}
-
-letter.innerText = sequence[index];
-letter.style.opacity="1";
-letter.style.filter="blur(0px)";
-letter.style.transform="scale(1.1)";
-
-setTimeout(()=>{
-letter.style.opacity="0";
-letter.style.filter="blur(15px)";
-writeLetter(index+1);
-},1200);
-}
-
-setTimeout(()=>{
-showLights();
-setTimeout(()=>{
-writeLetter(0);
-},800);
-},500);
-
 </script>
 
 </body>
