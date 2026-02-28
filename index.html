@@ -3,30 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaLoc - Location Voitures de Luxe</title>
+<title>NovaLoc - App Mobile Luxe</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-<!-- Hero -->
-<section class="relative h-screen w-full flex items-center justify-center bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80');">
+<!-- Hero Mobile -->
+<section class="relative h-64 w-full flex items-center justify-center bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80');">
   <div class="absolute inset-0 bg-red-900 bg-opacity-30"></div>
-  <h1 class="relative text-5xl sm:text-6xl font-extrabold text-white drop-shadow-lg text-center">NovaLoc<br><span class="text-red-600">Louez votre voiture de rêve</span></h1>
+  <h1 class="relative text-3xl font-extrabold text-white text-center px-4">NovaLoc<br><span class="text-red-600">Votre voiture de rêve</span></h1>
 </section>
 
 <!-- Choix véhicules -->
-<section class="py-16 flex flex-col items-center">
-  <h2 class="text-4xl font-bold mb-12">Choisissez votre véhicule</h2>
-  <div id="vehicleChoices" class="grid grid-cols-1 sm:grid-cols-3 gap-10 w-11/12 max-w-6xl"></div>
+<section class="flex flex-col items-center py-8">
+  <h2 class="text-2xl font-bold mb-6">Choisissez votre véhicule</h2>
+  <div id="vehicleChoices" class="flex flex-col gap-6 w-11/12"></div>
 </section>
 
 <!-- Réservation -->
-<section class="py-16 flex flex-col items-center bg-gray-800 rounded-3xl shadow-2xl w-11/12 max-w-2xl mx-auto mb-16">
-  <h2 class="text-3xl font-bold mb-6 pt-8">Réservez votre véhicule</h2>
-  <input type="date" id="startDate" class="p-4 rounded-xl mb-4 w-4/5 bg-gray-700 text-white text-lg" />
-  <input type="date" id="endDate" class="p-4 rounded-xl mb-4 w-4/5 bg-gray-700 text-white text-lg" />
-  <button id="confirmBtn" class="bg-red-600 hover:bg-red-700 transition text-white font-bold py-4 px-8 rounded-xl mb-4">Confirmer la réservation</button>
-  <div id="summary" class="text-center text-xl font-semibold mb-8"></div>
+<section id="reservationForm" class="hidden flex flex-col items-center gap-4 py-8 w-11/12 mx-auto bg-gray-800 rounded-3xl shadow-2xl mb-8">
+  <h2 class="text-2xl font-bold mb-4">Réservez votre véhicule</h2>
+  <input type="date" id="startDate" class="p-4 rounded-xl w-full bg-gray-700 text-white text-lg" />
+  <input type="date" id="endDate" class="p-4 rounded-xl w-full bg-gray-700 text-white text-lg" />
+  <button id="confirmBtn" class="bg-red-600 hover:bg-red-700 transition text-white font-bold py-4 px-6 rounded-xl w-full">Confirmer la réservation</button>
+  <div id="summary" class="text-center text-lg font-semibold mt-2"></div>
 </section>
 
 <script>
@@ -38,33 +38,31 @@ const vehicles=[
 ];
 
 const vehicleChoices = document.getElementById('vehicleChoices');
+const reservationForm = document.getElementById('reservationForm');
 const confirmBtn = document.getElementById('confirmBtn');
 const summary = document.getElementById('summary');
 let selectedVehicle = null;
 
-// Création des cards luxe
+// Création des cards mobile-friendly
 vehicles.forEach(v=>{
   const card = document.createElement('div');
-  card.className = "bg-gray-800 rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300 cursor-pointer group";
+  card.className = "bg-gray-800 rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col";
   card.innerHTML = `
-    <div class="overflow-hidden rounded-t-3xl">
-      <img src="${v.img}" alt="${v.name}" class="object-cover w-full h-64 group-hover:scale-110 transition-transform duration-500">
-    </div>
-    <div class="p-6">
-      <h3 class="text-2xl font-bold mb-2">${v.name}</h3>
-      <p class="text-gray-300 mb-2">${v.desc}</p>
+    <img src="${v.img}" alt="${v.name}" class="object-cover w-full h-48">
+    <div class="p-4">
+      <h3 class="text-xl font-bold mb-1">${v.name}</h3>
+      <p class="text-gray-300 mb-1">${v.desc}</p>
       <p class="text-lg font-semibold mb-2">${v.price} €/jour</p>
       <span class="px-3 py-1 rounded-full ${v.prestige==='Élevé'?'bg-red-600':'bg-yellow-500'} text-white font-semibold">${v.prestige}</span>
     </div>
   `;
-  card.onclick = () => selectVehicle(v);
+  card.addEventListener('click',()=>{
+    selectedVehicle=v;
+    reservationForm.classList.remove('hidden');
+    reservationForm.scrollIntoView({behavior:'smooth'});
+  });
   vehicleChoices.appendChild(card);
 });
-
-function selectVehicle(v){
-  selectedVehicle=v;
-  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-}
 
 // Calcul réservation
 confirmBtn.addEventListener('click',()=>{
