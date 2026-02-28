@@ -3,49 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Audi RS3 Luxury Rental</title>
+<title>Audi RS3 Luxury Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body,html{background:#0a0a0a;overflow:hidden;}
-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;display:block;}
-.page{display:none;background:#111;color:white;min-height:100vh;padding:20px;overflow-x:hidden;}
-h1{text-align:center;font-size:40px;margin-bottom:20px;}
-h2{font-size:28px;margin-bottom:15px;}
-p{color:#ccc;margin-bottom:15px;}
-input,select,button{padding:15px;font-size:16px;border-radius:10px;border:none;width:100%;margin-bottom:10px;}
-button{background:red;color:white;cursor:pointer;font-weight:700;}
-.summary{margin-top:15px;font-size:16px;font-weight:600;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:20px;}
-.card{background:#222;padding:15px;border-radius:12px;text-align:center;}
-.card h4{margin-bottom:5px;}
-img{width:100%;border-radius:12px;margin-bottom:20px;}
+body,html{background:#0a0a0a;color:white;overflow-x:hidden;}
+a{text-decoration:none;color:white;}
+button{cursor:pointer;}
+/* ===== Intro ===== */
+.intro{
+  position:fixed;top:0;left:0;width:100%;height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  background:black;z-index:9999;
+}
+.intro h1{
+  font-size:60px;font-weight:900;color:red;
+  letter-spacing:10px;
+  opacity:0;transform:scale(0.5);
+  animation:introAnim 1.5s forwards;
+}
+@keyframes introAnim{
+  to{opacity:1;transform:scale(1);}
+}
+
+/* ===== Landing ===== */
+.page{display:none;padding:20px;}
+.hero{
+  background:#111 url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+  height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;
+}
+.hero h1{font-size:50px;font-weight:900;background:rgba(0,0,0,0.5);padding:20px;border-radius:15px;}
+.section{padding:50px 10%;}
+.section h2{font-size:36px;margin-bottom:20px;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-bottom:30px;}
+.card{background:#222;padding:20px;border-radius:15px;text-align:center;transition:0.3s;}
+.card:hover{background:#333;transform:translateY(-5px);}
+.card h4{margin-bottom:10px;}
+form{max-width:400px;margin:auto;display:flex;flex-direction:column;gap:15px;}
+input,select,button{padding:15px;border-radius:10px;border:none;font-size:16px;}
+button{background:red;color:white;font-weight:700;transition:0.3s;}
+button:hover{transform:scale(1.05);}
+.summary{margin-top:15px;font-size:16px;font-weight:600;text-align:center;}
+/* Calendar */
+input[type=date]{background:#222;color:white;}
 @media(max-width:600px){
-  h1{font-size:32px;}
-  h2{font-size:22px;}
+  .hero h1{font-size:32px;padding:10px;}
+  .section h2{font-size:24px;}
 }
 </style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<!-- Intro -->
+<div class="intro">
+<h1>RS3</h1>
+</div>
 
+<!-- Landing Page -->
 <div class="page" id="mainPage">
+<section class="hero">
 <h1>Audi RS3 2025</h1>
-<img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80" alt="RS3">
-<h2>Caractéristiques Techniques</h2>
-<div class="grid">
+</section>
+
+<section class="section">
+<h2>Caractéristiques</h2>
+<div class="cards">
 <div class="card"><h4>Puissance</h4><p>400 ch</p></div>
 <div class="card"><h4>0-100 km/h</h4><p>3.8 s</p></div>
 <div class="card"><h4>Couple</h4><p>500 Nm</p></div>
 <div class="card"><h4>Transmission</h4><p>quattro</p></div>
+<div class="card"><h4>Carrosserie</h4><p>Sportback</p></div>
 </div>
+</section>
+
+<section class="section">
 <h2>Tarifs</h2>
-<div class="grid">
+<div class="cards">
 <div class="card"><h4>1 Jour</h4><p>490 €</p></div>
 <div class="card"><h4>2 Jours</h4><p>950 €</p></div>
 <div class="card"><h4>Week-end</h4><p>1200 €</p></div>
 <div class="card"><h4>1 Semaine</h4><p>3200 €</p></div>
 </div>
+</section>
+
+<section class="section">
 <h2>Réserver votre RS3</h2>
 <form id="reservationForm">
 <input type="date" id="startDate" required>
@@ -58,90 +100,34 @@ img{width:100%;border-radius:12px;margin-bottom:20px;}
 <button type="submit">Réserver</button>
 </form>
 <div class="summary" id="summary"></div>
+</section>
 </div>
 
 <script>
-// Canvas setup
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-const centerX=canvas.width/2;
-const centerY=canvas.height/2;
-const scale=15;
-
-// Letter points R S 3
-const letters={
-  R:[[0,0],[0,1],[0,2],[0,3],[0,4],[1,0],[2,0],[2,1],[1,2],[2,2],[1,3],[2,4]],
-  S:[[0,0],[1,0],[2,0],[0,1],[0,2],[1,2],[2,2],[2,3],[0,4],[1,4],[2,4]],
-  "3":[[0,0],[1,0],[2,0],[2,1],[1,2],[2,2],[2,3],[0,4],[1,4],[2,4]]
-};
-const sequence=["R","S","3"];
-let drawnPoints=[];
-
-// Draw loop
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="red";
-  ctx.shadowColor="red";
-  ctx.shadowBlur=12;
-  drawnPoints.forEach(pt=>{
-    ctx.beginPath();
-    ctx.arc(pt.x,pt.y,6,0,Math.PI*2);
-    ctx.fill();
-  });
-  requestAnimationFrame(draw);
-}
-draw();
-
-// Animate letter one by one centered
-async function animateLetter(letterArray){
-  return new Promise(resolve=>{
-    let i=0;
-    const interval=setInterval(()=>{
-      if(i>=letterArray.length){
-        clearInterval(interval);
-        resolve();
-        return;
-      }
-      const pt=letterArray[i];
-      drawnPoints.push({
-        x:centerX + (pt[0]-1)*scale*12,
-        y:centerY + (pt[1]-2)*scale*12
-      });
-      i++;
-    },120);
-  });
-}
-
-// Sequence animation
-async function animateSequence(){
-  for(let l of sequence){
-    drawnPoints=[]; // clear previous letter for mobile clarity
-    await animateLetter(letters[l]);
-    await new Promise(r=>setTimeout(r,500));
-  }
-  setTimeout(()=>{
-    canvas.style.display="none";
-    document.getElementById("mainPage").style.display="block";
-    document.body.style.overflow="auto";
-  },300);
-}
-animateSequence();
+// Intro fade out
+setTimeout(()=>{
+document.querySelector('.intro').style.display='none';
+document.getElementById('mainPage').style.display='block';
+document.body.style.overflow='auto';
+},1500);
 
 // Reservation form
 const form=document.getElementById("reservationForm");
 form.addEventListener("submit",function(e){
-  e.preventDefault();
-  const start=new Date(document.getElementById("startDate").value);
-  const end=new Date(document.getElementById("endDate").value);
-  const diff=(end-start)/(1000*60*60*24)+1;
-  if(diff<=0||diff>7){
-    document.getElementById("summary").innerText="Veuillez choisir 1 à 7 jours maximum.";
-    return;
-  }
-  const total=diff*490;
-  document.getElementById("summary").innerText=`Durée : ${diff} jour(s)\nTotal : ${total} €`;
+e.preventDefault();
+const start=new Date(document.getElementById("startDate").value);
+const end=new Date(document.getElementById("endDate").value);
+const diff=(end-start)/(1000*60*60*24)+1;
+if(diff<=0||diff>7){
+document.getElementById("summary").innerText="Veuillez choisir 1 à 7 jours maximum.";
+return;
+}
+let price=0;
+if(diff===1) price=490;
+else if(diff===2) price=950;
+else if(diff<=3) price=1200;
+else price=3200;
+document.getElementById("summary").innerText=`Durée : ${diff} jour(s)\nTotal : ${price} €`;
 });
 </script>
 </body>
