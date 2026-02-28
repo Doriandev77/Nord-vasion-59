@@ -3,38 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaLoc - Louez une voiture de luxe</title>
-<!-- UIkit CDN pour un rendu professionnel -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.20/dist/css/uikit.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.20/dist/js/uikit.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.20/dist/js/uikit-icons.min.js"></script>
+<title>NovaLoc - Location Voitures de Luxe</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="uk-background-muted uk-flex uk-flex-center uk-flex-middle" style="min-height:100vh;">
+<body class="bg-gray-900 text-white">
 
-<div class="uk-card uk-card-default uk-card-large uk-card-body uk-width-1-2@m uk-border-rounded uk-box-shadow-large">
-  <h1 class="uk-heading-medium uk-text-center uk-text-danger">NovaLoc - Louez votre voiture de rêve</h1>
-  
-  <!-- Choix des véhicules -->
-  <h2 class="uk-heading-small uk-margin-medium-top">Choisissez votre véhicule</h2>
-  <div class="uk-child-width-1-1@s uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid id="vehicleChoices">
-    <!-- Cards injectées par JS -->
-  </div>
-  
-  <!-- Réservation -->
-  <div id="reservationForm" class="uk-margin-medium-top" style="display:none;">
-    <h2 class="uk-heading-small">Réservez votre véhicule</h2>
-    <div class="uk-margin">
-      <label class="uk-form-label" for="startDate">Date de début</label>
-      <input class="uk-input" type="date" id="startDate" required>
-    </div>
-    <div class="uk-margin">
-      <label class="uk-form-label" for="endDate">Date de fin</label>
-      <input class="uk-input" type="date" id="endDate" required>
-    </div>
-    <button id="confirmBtn" class="uk-button uk-button-danger uk-width-1-1 uk-margin-small-top">Confirmer la réservation</button>
-    <div id="summary" class="uk-text-center uk-margin-top uk-text-bold"></div>
-  </div>
-</div>
+<!-- Hero -->
+<section class="relative h-screen w-full flex items-center justify-center bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80');">
+  <div class="absolute inset-0 bg-red-900 bg-opacity-30"></div>
+  <h1 class="relative text-5xl sm:text-6xl font-extrabold text-white drop-shadow-lg text-center">NovaLoc<br><span class="text-red-600">Louez votre voiture de rêve</span></h1>
+</section>
+
+<!-- Choix véhicules -->
+<section class="py-16 flex flex-col items-center">
+  <h2 class="text-4xl font-bold mb-12">Choisissez votre véhicule</h2>
+  <div id="vehicleChoices" class="grid grid-cols-1 sm:grid-cols-3 gap-10 w-11/12 max-w-6xl"></div>
+</section>
+
+<!-- Réservation -->
+<section class="py-16 flex flex-col items-center bg-gray-800 rounded-3xl shadow-2xl w-11/12 max-w-2xl mx-auto mb-16">
+  <h2 class="text-3xl font-bold mb-6 pt-8">Réservez votre véhicule</h2>
+  <input type="date" id="startDate" class="p-4 rounded-xl mb-4 w-4/5 bg-gray-700 text-white text-lg" />
+  <input type="date" id="endDate" class="p-4 rounded-xl mb-4 w-4/5 bg-gray-700 text-white text-lg" />
+  <button id="confirmBtn" class="bg-red-600 hover:bg-red-700 transition text-white font-bold py-4 px-8 rounded-xl mb-4">Confirmer la réservation</button>
+  <div id="summary" class="text-center text-xl font-semibold mb-8"></div>
+</section>
 
 <script>
 // Véhicules
@@ -45,35 +38,36 @@ const vehicles=[
 ];
 
 const vehicleChoices = document.getElementById('vehicleChoices');
-const reservationForm = document.getElementById('reservationForm');
+const confirmBtn = document.getElementById('confirmBtn');
 const summary = document.getElementById('summary');
 let selectedVehicle = null;
 
-// Création des vraies cards
+// Création des cards luxe
 vehicles.forEach(v=>{
   const card = document.createElement('div');
-  card.className="uk-card uk-card-default uk-card-body uk-border-rounded uk-box-shadow-large uk-transition-toggle";
-  card.innerHTML=`
-    <div class="uk-card-media-top">
-      <img src="${v.img}" alt="${v.name}" class="uk-border-rounded">
+  card.className = "bg-gray-800 rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300 cursor-pointer group";
+  card.innerHTML = `
+    <div class="overflow-hidden rounded-t-3xl">
+      <img src="${v.img}" alt="${v.name}" class="object-cover w-full h-64 group-hover:scale-110 transition-transform duration-500">
     </div>
-    <h3 class="uk-card-title uk-margin-small-top">${v.name}</h3>
-    <p>${v.desc}</p>
-    <p class="uk-text-bold">Prix: ${v.price} €/jour</p>
-    <span class="uk-label ${v.prestige==="Élevé"?'uk-label-danger':'uk-label-warning'}">${v.prestige}</span>
+    <div class="p-6">
+      <h3 class="text-2xl font-bold mb-2">${v.name}</h3>
+      <p class="text-gray-300 mb-2">${v.desc}</p>
+      <p class="text-lg font-semibold mb-2">${v.price} €/jour</p>
+      <span class="px-3 py-1 rounded-full ${v.prestige==='Élevé'?'bg-red-600':'bg-yellow-500'} text-white font-semibold">${v.prestige}</span>
+    </div>
   `;
-  card.addEventListener('click',()=>selectVehicle(v));
+  card.onclick = () => selectVehicle(v);
   vehicleChoices.appendChild(card);
 });
 
 function selectVehicle(v){
   selectedVehicle=v;
-  reservationForm.style.display="block";
   window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
 }
 
 // Calcul réservation
-document.getElementById('confirmBtn').addEventListener('click',()=>{
+confirmBtn.addEventListener('click',()=>{
   const start = new Date(document.getElementById('startDate').value);
   const end = new Date(document.getElementById('endDate').value);
   const diff=(end-start)/(1000*60*60*24)+1;
