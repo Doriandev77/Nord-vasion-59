@@ -3,42 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaLoc - Bot de Réservation</title>
+<title>NovaLoc - Bot de Réservation VIP</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body,html{background:#0a0a0a;color:white;overflow:hidden;height:100vh;display:flex;justify-content:center;align-items:center;}
-#chat-container{width:100%;max-width:500px;height:90vh;background:#111;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 30px rgba(255,0,0,0.3);}
+body,html{height:100%;width:100%;overflow:hidden;background:#0a0a0a;color:white;display:flex;justify-content:center;align-items:center;}
+#bot-container{width:100%;height:100%;display:flex;flex-direction:column;background:#111;}
 #messages{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:15px;}
-.message{max-width:80%;padding:12px 18px;border-radius:15px;position:relative;opacity:0;animation:fadeIn 0.3s forwards;}
-.bot{background:#222;color:red;align-self:flex-start;}
-.user{background:#333;color:white;align-self:flex-end;}
-#choices{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:10px;}
-.choice-card{flex:1 1 40%;background:#222;border-radius:15px;padding:15px;text-align:center;cursor:pointer;transition:0.3s;box-shadow:0 0 10px rgba(255,255,255,0.05);}
+.message{max-width:80%;padding:14px 18px;border-radius:15px;position:relative;opacity:0;animation:fadeIn 0.3s forwards;}
+.bot{background:#222;color:red;align-self:flex-start;box-shadow:0 0 10px rgba(255,0,0,0.3);}
+.user{background:#333;color:white;align-self:flex-end;box-shadow:0 0 5px rgba(255,255,255,0.2);}
+#choices{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;padding:10px;}
+.choice-card{flex:1 1 40%;background:#222;border-radius:15px;padding:12px;text-align:center;cursor:pointer;transition:0.3s;box-shadow:0 0 10px rgba(255,255,255,0.05);}
 .choice-card.prestige{box-shadow:0 0 20px rgba(255,0,0,0.7);border:2px solid red;transform:scale(1.05);}
 .choice-card img{width:100%;border-radius:10px;margin-bottom:10px;}
 #calendar-container{display:flex;flex-direction:column;gap:10px;padding:10px;display:none;}
 input[type=date]{padding:12px;border-radius:10px;border:none;background:#222;color:white;}
-button{padding:12px;border-radius:10px;border:none;background:red;color:white;font-weight:700;cursor:pointer;}
-@keyframes fadeIn{to{opacity:1;}}
-.typing{width:50px;height:10px;display:flex;gap:5px;align-items:center;}
+button{padding:12px;border-radius:10px;border:none;background:red;color:white;font-weight:700;cursor:pointer;transition:0.3s;}
+button:hover{transform:scale(1.05);}
+.summary{margin-top:10px;font-size:16px;font-weight:600;text-align:center;}
+.typing{width:50px;height:10px;display:flex;gap:5px;align-items:center;margin-left:5px;}
 .typing span{width:10px;height:10px;background:red;border-radius:50%;animation:typingAnim 1s infinite;}
 .typing span:nth-child(2){animation-delay:0.2s;}
 .typing span:nth-child(3){animation-delay:0.4s;}
 @keyframes typingAnim{0%,80%,100%{transform:scale(0.5);opacity:0.3;}40%{transform:scale(1);opacity:1;}}
+@keyframes fadeIn{to{opacity:1;}}
+@media(max-width:600px){
+  .choice-card{flex:1 1 100%;}
+}
 </style>
 </head>
 <body>
 
-<div id="chat-container">
-<div id="messages"></div>
-<div id="choices"></div>
-<div id="calendar-container">
-<input type="date" id="startDate" required>
-<input type="date" id="endDate" required>
-<button id="confirmBtn">Confirmer</button>
-<div class="summary" id="summary"></div>
-</div>
+<div id="bot-container">
+  <div id="messages"></div>
+  <div id="choices"></div>
+  <div id="calendar-container">
+    <input type="date" id="startDate" required>
+    <input type="date" id="endDate" required>
+    <button id="confirmBtn">Confirmer la réservation</button>
+    <div class="summary" id="summary"></div>
+  </div>
 </div>
 
 <script>
@@ -78,7 +83,7 @@ async function botIntro(){
   let t=addTyping();
   await new Promise(r=>setTimeout(r,1500));
   t.remove();
-  await addMessage("Bonjour et bienvenue chez NovaLoc 😎, votre assistant VIP de réservation de voitures de luxe !");
+  await addMessage("Bonjour et bienvenue chez NovaLoc 😎, votre assistant VIP pour réserver votre voiture de luxe !");
   await new Promise(r=>setTimeout(r,500));
   showVehicleChoices();
 }
@@ -100,11 +105,13 @@ async function selectVehicle(v){
   selectedVehicle=v;
   choicesDiv.innerHTML="";
   await addMessage(`Excellent choix ! Vous avez sélectionné : ${v.name}`);
-  setTimeout(()=>{calendarContainer.style.display="flex";},500);
+  await new Promise(r=>setTimeout(r,300));
+  calendarContainer.style.display="flex";
+  await addMessage("Pour quelles dates souhaitez-vous la réserver ?");
 }
 
 // Reservation confirmation
-document.getElementById("confirmBtn").addEventListener("click",()=>{
+document.getElementById("confirmBtn").addEventListener("click",async ()=>{
   const start=new Date(document.getElementById("startDate").value);
   const end=new Date(document.getElementById("endDate").value);
   const diff=(end-start)/(1000*60*60*24)+1;
@@ -114,7 +121,7 @@ document.getElementById("confirmBtn").addEventListener("click",()=>{
   }
   const total=diff*selectedVehicle.price;
   summary.textContent=`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) coûtera ${total} €. Merci d'avoir choisi NovaLoc !`;
-  addMessage(`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) est confirmée ! Prix total : ${total} €`);
+  await addMessage(`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) est confirmée ! Prix total : ${total} €`);
 });
 
 botIntro();
