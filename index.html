@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Audi RS3 2025 — Performance Experience</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audi RS3 2025</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <style>
-
-/* ============================= */
-/* RESET */
-/* ============================= */
 
 *{
 margin:0;
@@ -23,61 +18,48 @@ font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
 }
 
 body{
-background:#0a0a0a;
+background:#0b0b0b;
 color:white;
 overflow-x:hidden;
 }
 
-/* ============================= */
-/* LOADER CINÉMATIQUE */
-/* ============================= */
+/* ========================= */
+/* LOADER ANNEAUX AUDI */
+/* ========================= */
 
 .loader{
 position:fixed;
 width:100%;
 height:100vh;
-background:#000;
+background:black;
 display:flex;
 align-items:center;
 justify-content:center;
-flex-direction:column;
 z-index:9999;
 }
 
-.loader img{
-width:380px;
+.rings{
+display:flex;
+gap:20px;
 }
 
-.loader h1{
-margin-top:40px;
-font-size:50px;
-font-weight:900;
-letter-spacing:6px;
+.ring{
+width:120px;
+height:120px;
+border:8px solid white;
+border-radius:50%;
 opacity:0;
+transform:scale(0.5);
+filter:drop-shadow(0 0 15px rgba(255,255,255,0.6));
 }
 
-/* ============================= */
+/* ========================= */
 /* HERO */
-/* ============================= */
+/* ========================= */
 
 .hero{
-position:relative;
 height:100vh;
-overflow:hidden;
-}
-
-.hero video{
-position:absolute;
-width:100%;
-height:100%;
-object-fit:cover;
-opacity:0.45;
-}
-
-.hero-content{
-position:relative;
-z-index:2;
-height:100%;
+background:url('https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -86,269 +68,113 @@ text-align:center;
 padding:20px;
 }
 
-.hero h2{
-font-size:100px;
+.hero h1{
+font-size:90px;
 font-weight:900;
-letter-spacing:-4px;
+letter-spacing:-3px;
 }
 
 .hero p{
-font-size:26px;
+font-size:24px;
 margin-top:20px;
 max-width:800px;
-color:#ccc;
+color:#ddd;
 }
-
-/* ============================= */
-/* SECTIONS */
-/* ============================= */
 
 .section{
-padding:140px 10%;
+padding:120px 10%;
+background:#111;
 }
 
-.section h3{
-font-size:60px;
-font-weight:900;
+.section h2{
+font-size:50px;
 margin-bottom:60px;
 }
 
-/* PERFORMANCE GRID */
-
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:40px;
 }
 
 .card{
-background:#111;
-padding:40px;
-border-radius:25px;
-transition:0.4s;
-}
-
-.card:hover{
-transform:translateY(-12px);
-background:#151515;
-}
-
-.card h4{
-font-size:22px;
-margin-bottom:15px;
-}
-
-.card span{
-font-size:42px;
-font-weight:900;
-display:block;
-margin-top:10px;
-}
-
-/* ============================= */
-/* TARIFS */
-/* ============================= */
-
-.pricing{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-gap:30px;
-}
-
-.price{
-background:linear-gradient(145deg,#111,#000);
-padding:45px;
-border-radius:30px;
-text-align:center;
-transition:0.4s;
-}
-
-.price:hover{
-transform:scale(1.05);
-}
-
-.price span{
-font-size:48px;
-font-weight:900;
-display:block;
-margin-top:20px;
-}
-
-/* ============================= */
-/* RESERVATION */
-/* ============================= */
-
-form{
-margin-top:50px;
-display:grid;
-gap:20px;
-max-width:550px;
-}
-
-input,select{
-padding:20px;
+background:#1a1a1a;
+padding:35px;
 border-radius:20px;
-border:none;
-background:#151515;
-color:white;
-font-size:16px;
-}
-
-button{
-padding:20px;
-border:none;
-border-radius:50px;
-background:white;
-color:black;
-font-size:18px;
-font-weight:800;
-cursor:pointer;
 transition:0.3s;
 }
 
-button:hover{
-transform:scale(1.05);
-}
-
-.summary{
-margin-top:30px;
-font-size:20px;
-font-weight:600;
-}
-
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
-
-@media(max-width:900px){
-.hero h2{font-size:50px;}
-.section h3{font-size:35px;}
+.card:hover{
+transform:translateY(-10px);
+background:#222;
 }
 
 </style>
 </head>
-
 <body>
 
-<!-- ============================= -->
 <!-- LOADER -->
-<!-- ============================= -->
-
 <div class="loader">
-<img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=1200&q=80">
-<h1>RS3</h1>
+<div class="rings">
+<div class="ring"></div>
+<div class="ring"></div>
+<div class="ring"></div>
+<div class="ring"></div>
+</div>
 </div>
 
-<!-- ============================= -->
-<!-- HERO VIDEO -->
-<!-- ============================= -->
-
+<!-- HERO -->
 <section class="hero">
-<video autoplay muted loop>
-<source src="https://cdn.coverr.co/videos/coverr-sports-car-driving-fast-7270/1080p.mp4" type="video/mp4">
-</video>
-<div class="hero-content">
-<h2>Audi RS3 2025</h2>
-<p>400 chevaux. 5 cylindres mythique. Transmission quattro. 
-L’icône compacte radicale.</p>
-</div>
+<h1>Audi RS3 2025</h1>
+<p>400 chevaux. 5 cylindres légendaire. Transmission quattro.</p>
 </section>
 
-<!-- ============================= -->
-<!-- PERFORMANCE -->
-<!-- ============================= -->
-
 <section class="section">
-<h3>Performance</h3>
+<h2>Performance</h2>
 <div class="grid">
-<div class="card">
-<h4>Puissance</h4>
-<span id="hp">0</span> ch
+<div class="card"><strong>Puissance</strong><p>400 ch</p></div>
+<div class="card"><strong>0-100 km/h</strong><p>3.8 secondes</p></div>
+<div class="card"><strong>Couple</strong><p>500 Nm</p></div>
+<div class="card"><strong>Transmission</strong><p>quattro</p></div>
 </div>
-<div class="card">
-<h4>0-100 km/h</h4>
-<span>3.8 s</span>
-</div>
-<div class="card">
-<h4>Couple</h4>
-<span>500 Nm</span>
-</div>
-<div class="card">
-<h4>Transmission</h4>
-<span>quattro</span>
-</div>
-</div>
-</section>
-
-<!-- ============================= -->
-<!-- TARIFS -->
-<!-- ============================= -->
-
-<section class="section">
-<h3>Tarifs Location</h3>
-<div class="pricing">
-<div class="price"><h4>1 Jour</h4><span>490 €</span></div>
-<div class="price"><h4>2 Jours</h4><span>950 €</span></div>
-<div class="price"><h4>Week-end</h4><span>1 200 €</span></div>
-<div class="price"><h4>1 Semaine</h4><span>3 200 €</span></div>
-</div>
-</section>
-
-<!-- ============================= -->
-<!-- RESERVATION -->
-<!-- ============================= -->
-
-<section class="section">
-<h3>Réserver votre RS3</h3>
-
-<form id="form">
-<input type="date" id="start" required>
-<input type="date" id="end" required>
-<select>
-<option>Paris</option>
-<option>Monaco</option>
-<option>Lyon</option>
-</select>
-<button type="submit">Confirmer la réservation</button>
-</form>
-
-<div class="summary" id="summary"></div>
-
 </section>
 
 <script>
 
-gsap.registerPlugin(ScrollTrigger);
+/* Animation des 4 anneaux */
 
-/* LOADER */
-gsap.from(".loader img",{scale:0.5,y:200,duration:2,ease:"power4.out"});
-gsap.to(".loader h1",{opacity:1,delay:1});
-gsap.to(".loader",{opacity:0,delay:3,duration:1});
+const rings = document.querySelectorAll(".ring");
 
-/* COMPTEUR HP */
-let power={val:0};
-gsap.to(power,{
-val:400,
-duration:3,
-delay:3.5,
-onUpdate:function(){
-document.getElementById("hp").innerText=Math.floor(power.val);
-}
+gsap.to(rings, {
+opacity:1,
+scale:1,
+duration:1,
+stagger:0.2,
+ease:"power3.out"
 });
 
-/* RESERVATION */
-document.getElementById("form").addEventListener("submit",function(e){
-e.preventDefault();
-let start=new Date(document.getElementById("start").value);
-let end=new Date(document.getElementById("end").value);
-let days=(end-start)/(1000*60*60*24);
-if(days<=0){
-document.getElementById("summary").innerHTML="Dates invalides";
-return;
-}
-let total=days*490;
-document.getElementById("summary").innerHTML=
-days+" jour(s) - "+total.toLocaleString()+" €";
+/* Effet magnétique alignement */
+gsap.to(rings, {
+x:(i)=> i* -10,
+duration:1,
+delay:1.2
+});
+
+/* Pulse glow */
+gsap.to(rings,{
+scale:1.1,
+repeat:1,
+yoyo:true,
+duration:0.4,
+delay:2
+});
+
+/* Disparition loader */
+gsap.to(".loader",{
+opacity:0,
+duration:1,
+delay:3,
+pointerEvents:"none"
 });
 
 </script>
