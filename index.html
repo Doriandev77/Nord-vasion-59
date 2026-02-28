@@ -4,26 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NovaLoc — Initialisation</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4278254487101294"
-     crossorigin="anonymous"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body{
   height:100vh;
-  background:#1a1a1a; /* fond sombre */
+  background:#0f0f0f; /* noir profond */
   display:flex;
   justify-content:center;
   align-items:center;
   flex-direction:column;
-  color:#f5f5dc; /* jaune pastel */
+  color:#ffd966; /* jaune pastel doux */
   overflow:hidden;
   animation:fadeIn 0.8s ease forwards;
   opacity:0;
@@ -36,39 +36,35 @@ body{
   margin-bottom:20px;
 }
 
-/* Logo Text */
-.logo{
-  font-size:32px;
-  font-weight:600;
-  margin-bottom:20px;
-  color:#f5f5dc;
-}
-
 /* Welcome */
 .welcome{
-  font-size:18px;
-  color:#e0d8a6; /* jaune pastel plus clair */
-  margin-bottom:40px;
+  font-size:20px;
+  font-weight:600;
+  color:#ffe799; /* jaune plus doux */
+  margin-bottom:30px;
+  letter-spacing:0.5px;
+  text-align:center;
 }
 
 /* Loader */
 .loader{
-  width:42px;
-  height:42px;
+  width:50px;
+  height:50px;
   border-radius:50%;
-  border:3px solid #555;
-  border-top:3px solid #f5f5dc;
-  animation:spin 0.9s linear infinite;
-  margin-bottom:30px;
+  border:4px solid #333;
+  border-top:4px solid #ffd966;
+  animation:spin 1s linear infinite;
+  margin-bottom:25px;
 }
 
-/* Terminal messages */
+/* Messages */
 .messages{
-  height:60px;
+  height:70px;
   overflow:hidden;
-  font-size:14px;
-  color:#e0d8a6;
+  font-size:15px;
+  color:#ffe799;
   text-align:center;
+  margin-bottom:25px;
 }
 
 .message{
@@ -76,13 +72,14 @@ body{
   animation:fadeMsg 0.6s ease forwards;
 }
 
+/* Progress bar */
 .progress{
   position:absolute;
   bottom:0;
   left:0;
-  height:3px;
+  height:4px;
   width:0%;
-  background:#f5f5dc;
+  background:#ffd966;
   border-radius:2px;
 }
 
@@ -103,17 +100,13 @@ body{
 
 <body>
 
-<!-- Logo Image -->
 <img src="IMG_1726.png" alt="Logo NovaLoc" class="logo-img">
 <div class="welcome" id="welcomeText">Bienvenue...</div>
 <div class="loader"></div>
-
 <div class="messages" id="messages"></div>
-
 <div class="progress" id="progressBar"></div>
 
 <script>
-/* TELEGRAM USER */
 let username = "Utilisateur";
 
 if(window.Telegram && Telegram.WebApp){
@@ -126,7 +119,7 @@ if(window.Telegram && Telegram.WebApp){
 
 document.getElementById("welcomeText").innerText = "Bienvenue " + username;
 
-/* Messages défilants */
+/* Messages animés */
 const texts = [
 "Connexion sécurisée...",
 "Chargement de votre espace NovaLoc...",
@@ -151,7 +144,7 @@ function showMessage(){
 
 setInterval(showMessage, 1000);
 
-/* PROGRESS + REDIRECTION */
+/* Progress + Redirection */
 let duration = 5000; 
 let start = Date.now();
 let progressBar = document.getElementById("progressBar");
