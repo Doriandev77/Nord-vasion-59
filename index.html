@@ -3,102 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaLoc - App Mobile Luxe Prestige</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>NovaLoc — Initialisation</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4278254487101294"
+     crossorigin="anonymous"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
-/* Glow premium sur cards de prestige */
-.card-prestige:hover {
-  box-shadow: 0 0 30px rgba(255,0,0,0.8);
-  transform: scale(1.05);
-  transition: all 0.4s ease-in-out;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 
-/* Hero texte animé */
-@keyframes fadeInUp {
-  from {opacity:0; transform: translateY(20px);}
-  to {opacity:1; transform: translateY(0);}
+body{
+  height:100vh;
+  background:#1a1a1a; /* fond sombre */
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:#f5f5dc; /* jaune pastel */
+  overflow:hidden;
+  animation:fadeIn 0.8s ease forwards;
+  opacity:0;
 }
-.fadeInUp {
-  animation: fadeInUp 1s ease-out forwards;
+
+/* Logo Image */
+.logo-img{
+  width:120px;
+  height:auto;
+  margin-bottom:20px;
+}
+
+/* Logo Text */
+.logo{
+  font-size:32px;
+  font-weight:600;
+  margin-bottom:20px;
+  color:#f5f5dc;
+}
+
+/* Welcome */
+.welcome{
+  font-size:18px;
+  color:#e0d8a6; /* jaune pastel plus clair */
+  margin-bottom:40px;
+}
+
+/* Loader */
+.loader{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:3px solid #555;
+  border-top:3px solid #f5f5dc;
+  animation:spin 0.9s linear infinite;
+  margin-bottom:30px;
+}
+
+/* Terminal messages */
+.messages{
+  height:60px;
+  overflow:hidden;
+  font-size:14px;
+  color:#e0d8a6;
+  text-align:center;
+}
+
+.message{
+  opacity:0;
+  animation:fadeMsg 0.6s ease forwards;
+}
+
+.progress{
+  position:absolute;
+  bottom:0;
+  left:0;
+  height:3px;
+  width:0%;
+  background:#f5f5dc;
+  border-radius:2px;
+}
+
+/* Animations */
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+@keyframes fadeIn{
+  to{opacity:1;}
+}
+
+@keyframes fadeMsg{
+  to{opacity:1;}
 }
 </style>
 </head>
-<body class="bg-gray-950 text-white overflow-x-hidden">
 
-<!-- Hero mobile full-screen -->
-<section class="relative h-screen w-full flex items-center justify-center bg-cover bg-center">
-  <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80" alt="Voiture de luxe" class="absolute inset-0 w-full h-full object-cover opacity-50">
-  <div class="absolute inset-0 bg-black bg-opacity-75"></div>
-  <h1 class="relative text-4xl sm:text-5xl font-extrabold text-red-600 text-center fadeInUp px-4">
-    NovaLoc
-    <br>
-    <span class="text-white text-xl sm:text-2xl font-semibold">Votre voiture de rêve vous attend</span>
-  </h1>
-</section>
+<body>
 
-<!-- Choix véhicules -->
-<section class="flex flex-col items-center py-8 px-4">
-  <h2 class="text-2xl font-bold mb-6">Choisissez votre véhicule</h2>
-  <div id="vehicleChoices" class="flex flex-col gap-6 w-full max-w-md"></div>
-</section>
+<!-- Logo Image -->
+<img src="IMG_1726.png" alt="Logo NovaLoc" class="logo-img">
+<div class="welcome" id="welcomeText">Bienvenue...</div>
+<div class="loader"></div>
 
-<!-- Réservation -->
-<section id="reservationForm" class="hidden flex flex-col items-center gap-4 py-8 px-4 bg-gray-900 rounded-3xl shadow-2xl w-full max-w-md mx-auto mb-8">
-  <h2 class="text-2xl font-bold mb-4">Réservez votre véhicule</h2>
-  <input type="date" id="startDate" class="p-4 rounded-xl w-full bg-gray-800 text-white text-lg" />
-  <input type="date" id="endDate" class="p-4 rounded-xl w-full bg-gray-800 text-white text-lg" />
-  <button id="confirmBtn" class="bg-red-600 hover:bg-red-700 transition text-white font-bold py-4 px-6 rounded-xl w-full">Confirmer la réservation</button>
-  <div id="summary" class="text-center text-lg font-semibold mt-2"></div>
-</section>
+<div class="messages" id="messages"></div>
+
+<div class="progress" id="progressBar"></div>
 
 <script>
-// Véhicules
-const vehicles=[
-  {name:"Audi RS3 2025",price:490,img:"https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80",prestige:"Moyen",desc:"Sportback, 400ch, 0-100km/h en 3.8s"},
-  {name:"BMW M5 2026",price:550,img:"https://images.unsplash.com/photo-1612556632370-3d1f4296c5aa?auto=format&fit=crop&w=2000&q=80",prestige:"Élevé",desc:"Berline sportive, 600ch, 0-100km/h en 3.3s"},
-  {name:"Mercedes AMG GT",price:600,img:"https://images.unsplash.com/photo-1597003791337-6f3cd9074b08?auto=format&fit=crop&w=2000&q=80",prestige:"Élevé",desc:"Coupé, 580ch, 0-100km/h en 3.6s"}
+/* TELEGRAM USER */
+let username = "Utilisateur";
+
+if(window.Telegram && Telegram.WebApp){
+  Telegram.WebApp.ready();
+  let user = Telegram.WebApp.initDataUnsafe.user;
+  if(user){
+    username = user.username ? "@" + user.username : user.first_name;
+  }
+}
+
+document.getElementById("welcomeText").innerText = "Bienvenue " + username;
+
+/* Messages défilants */
+const texts = [
+"Connexion sécurisée...",
+"Chargement de votre espace NovaLoc...",
+"Synchronisation des véhicules...",
+"Préparation de l’interface de réservation...",
+"NovaLoc est prêt."
 ];
 
-const vehicleChoices = document.getElementById('vehicleChoices');
-const reservationForm = document.getElementById('reservationForm');
-const confirmBtn = document.getElementById('confirmBtn');
-const summary = document.getElementById('summary');
-let selectedVehicle = null;
+let messagesDiv = document.getElementById("messages");
+let index = 0;
 
-// Création des cards prestige mobile
-vehicles.forEach(v=>{
-  const card = document.createElement('div');
-  const prestigeClass = v.prestige==='Élevé'?'card-prestige':'';
-  card.className = `bg-gray-800 rounded-2xl overflow-hidden shadow-xl cursor-pointer flex flex-col ${prestigeClass}`;
-  card.innerHTML = `
-    <img src="${v.img}" alt="${v.name}" class="object-cover w-full h-48">
-    <div class="p-4">
-      <h3 class="text-xl font-bold mb-1">${v.name}</h3>
-      <p class="text-gray-300 mb-1">${v.desc}</p>
-      <p class="text-lg font-semibold mb-2">${v.price} €/jour</p>
-      <span class="px-3 py-1 rounded-full ${v.prestige==='Élevé'?'bg-red-600':'bg-yellow-500'} text-white font-semibold">${v.prestige}</span>
-    </div>
-  `;
-  card.addEventListener('click',()=>{
-    selectedVehicle=v;
-    reservationForm.classList.remove('hidden');
-    reservationForm.scrollIntoView({behavior:'smooth'});
-  });
-  vehicleChoices.appendChild(card);
-});
-
-// Calcul réservation
-confirmBtn.addEventListener('click',()=>{
-  const start = new Date(document.getElementById('startDate').value);
-  const end = new Date(document.getElementById('endDate').value);
-  const diff=(end-start)/(1000*60*60*24)+1;
-  if(diff<=0||diff>7){
-    summary.textContent="Veuillez choisir une durée de 1 à 7 jours maximum.";
-    return;
+function showMessage(){
+  if(index < texts.length){
+    let div = document.createElement("div");
+    div.classList.add("message");
+    div.innerText = texts[index];
+    messagesDiv.innerHTML = "";
+    messagesDiv.appendChild(div);
+    index++;
   }
-  const total = diff * selectedVehicle.price;
-  summary.textContent=`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) coûtera ${total} €. Merci d'avoir choisi NovaLoc !`;
-});
+}
+
+setInterval(showMessage, 1000);
+
+/* PROGRESS + REDIRECTION */
+let duration = 5000; 
+let start = Date.now();
+let progressBar = document.getElementById("progressBar");
+
+let interval = setInterval(()=>{
+  let elapsed = Date.now() - start;
+  let percent = (elapsed / duration) * 100;
+  progressBar.style.width = percent + "%";
+
+  if(elapsed >= duration){
+    clearInterval(interval);
+
+    document.body.style.transition="opacity 0.6s ease";
+    document.body.style.opacity="0";
+
+    setTimeout(()=>{
+      window.location.href="home.html";
+    },600);
+  }
+},16);
 </script>
 
 </body>
