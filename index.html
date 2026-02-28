@@ -2,268 +2,214 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Les Boucles de la Lucidité</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMW M5 2026</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
 
 <style>
-body {
-  background: #0b0b0b;
-  color: #e0e0e0;
-  font-family: "Georgia", serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+scroll-behavior:smooth;
 }
 
-.game {
-  width: 600px;
-  max-width: 90%;
-  background: #151515;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+body{
+background:white;
+color:#000;
+overflow-x:hidden;
 }
 
-#story {
-  font-size: 1.1em;
-  line-height: 1.6;
-  margin-bottom: 25px;
+/* SECTIONS */
+.section{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:0 10%;
+position:relative;
 }
 
-button {
-  display: block;
-  width: 100%;
-  margin: 8px 0;
-  padding: 12px;
-  background: #222;
-  color: #ddd;
-  border: none;
-  border-radius: 6px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.2s;
+.full-image{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-1;
 }
 
-button:hover {
-  background: #333;
+.overlay{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(255,255,255,0.6);
+z-index:-1;
+}
+
+/* TYPO */
+.big{
+font-size:120px;
+font-weight:900;
+letter-spacing:-4px;
+line-height:0.9;
+}
+
+.medium{
+font-size:70px;
+font-weight:800;
+letter-spacing:-2px;
+}
+
+.small{
+font-size:24px;
+color:#333;
+margin-top:30px;
+max-width:800px;
+}
+
+/* BLACK SECTION */
+.dark{
+background:black;
+color:white;
+}
+
+/* BUTTON */
+button{
+margin-top:40px;
+padding:22px 60px;
+font-size:20px;
+font-weight:700;
+border:none;
+border-radius:50px;
+cursor:pointer;
+transition:0.4s;
+background:white;
+color:black;
+}
+
+button:hover{
+transform:scale(1.1);
+}
+
+/* RESERVATION */
+form{
+display:flex;
+flex-direction:column;
+gap:25px;
+margin-top:40px;
+width:100%;
+max-width:500px;
+}
+
+input,select{
+padding:20px;
+border-radius:40px;
+border:none;
+font-size:18px;
+}
+
+.summary{
+margin-top:30px;
+font-size:22px;
+font-weight:600;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+.big{font-size:60px;}
+.medium{font-size:40px;}
 }
 </style>
 </head>
 
 <body>
 
-<div class="game">
-  <div id="story"></div>
-  <div id="choices"></div>
-</div>
+<!-- HERO MASSIF -->
+<section class="section">
+<h1 class="big">BMW M5</h1>
+<p class="small">La berline la plus radicale jamais conçue.</p>
+</section>
+
+<!-- IMAGE PLEIN ECRAN -->
+<section class="section">
+<img class="full-image" src="https://images.unsplash.com/photo-1603386329225-868f9b1ee6b9?auto=format&fit=crop&w=1920&q=80">
+<div class="overlay"></div>
+<h2 class="medium">625 chevaux.</h2>
+</section>
+
+<!-- IMPACT -->
+<section class="section dark">
+<h2 class="medium">3.3 secondes.</h2>
+<p class="small">0 à 100 km/h. Sans compromis.</p>
+</section>
+
+<!-- IMAGE DRAMATIQUE -->
+<section class="section">
+<img class="full-image" src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1920&q=80">
+<div class="overlay"></div>
+<h2 class="medium">305 km/h.</h2>
+</section>
+
+<!-- DECLARATION -->
+<section class="section dark">
+<h2 class="medium">Ce n’est pas une voiture.</h2>
+<h1 class="big">C’est une déclaration.</h1>
+</section>
+
+<!-- RESERVATION -->
+<section class="section">
+<h2 class="medium">Réservez. Maintenant.</h2>
+
+<form id="reservationForm">
+<input type="date" id="startDate" required>
+<input type="date" id="endDate" required>
+
+<select>
+<option>Paris</option>
+<option>Monaco</option>
+<option>Genève</option>
+</select>
+
+<button type="submit">Je veux ma M5</button>
+</form>
+
+<div class="summary" id="summary"></div>
+
+</section>
 
 <script>
-/* ======================
-   ÉTAT CACHÉ DU JOUEUR
-====================== */
-let state = {
-  lucidite: 0,
-  peur: 0,
-  fatigue: 0,
-  espoir: 1,
-  memoire: 0,
-  boucle: 0
-};
+const form = document.getElementById("reservationForm");
+const summary = document.getElementById("summary");
 
-/* ======================
-   SCÈNES
-====================== */
-const scenes = {
+form.addEventListener("submit", function(e){
+e.preventDefault();
 
-  start: {
-    text: "Tu ouvres les yeux.\n\nLe plafond est familier. Trop familier.\n\nTu as déjà été ici.",
-    choices: [
-      {
-        text: "Te lever immédiatement",
-        next: "couloir",
-        effect: () => state.fatigue++
-      },
-      {
-        text: "Rester immobile et réfléchir",
-        next: "souvenir",
-        effect: () => state.lucidite++
-      }
-    ]
-  },
+const start = new Date(document.getElementById("startDate").value);
+const end = new Date(document.getElementById("endDate").value);
 
-  souvenir: {
-    text: "Les souvenirs remontent par fragments.\n\nPlus tu insistes, plus ton cœur s'accélère.",
-    choices: [
-      {
-        text: "Forcer ta mémoire",
-        next: "fracture",
-        effect: () => {
-          state.memoire++;
-          state.peur++;
-          state.lucidite++;
-        }
-      },
-      {
-        text: "Fuir ces pensées",
-        next: "couloir",
-        effect: () => state.espoir++
-      }
-    ]
-  },
+const days = (end - start) / (1000*60*60*24);
+const pricePerDay = 1500;
 
-  fracture: {
-    text: "Quelque chose s'est brisé en toi.\n\nTu te souviens… mais pas entièrement.",
-    choices: [
-      {
-        text: "Accepter l'incomplétude",
-        next: "couloir",
-        effect: () => state.espoir--
-      },
-      {
-        text: "Chercher plus loin",
-        next: "effondrement",
-        condition: () => state.memoire >= 2
-      }
-    ]
-  },
-
-  effondrement: {
-    text: "La vérité est trop lourde.\n\nTon esprit se replie sur lui-même.",
-    choices: [
-      {
-        text: "Lutter",
-        next: "mort",
-        effect: () => state.peur += 2
-      },
-      {
-        text: "Lâcher prise",
-        next: "couloir",
-        effect: () => state.lucidite += 2
-      }
-    ]
-  },
-
-  couloir: {
-    text: () => {
-      if (state.lucidite >= 4) {
-        return "Le couloir pulse doucement.\n\nCe lieu n'est pas réel.";
-      }
-      return "Un long couloir s'étend devant toi.\n\nChaque pas est lourd.";
-    },
-    choices: [
-      {
-        text: "Avancer",
-        next: "porte",
-        effect: () => state.fatigue++
-      },
-      {
-        text: "T’asseoir contre le mur",
-        next: "repos",
-        condition: () => state.fatigue > 0
-      }
-    ]
-  },
-
-  repos: {
-    text: "Le repos t’apaise… mais quelque chose t’échappe.",
-    choices: [
-      {
-        text: "Te relever",
-        next: "couloir",
-        effect: () => state.espoir--
-      }
-    ]
-  },
-
-  porte: {
-    text: "Une porte noire bloque le passage.\n\nElle ne s'ouvre pas par la force.",
-    choices: [
-      {
-        text: "Forcer la porte",
-        next: "mort",
-        condition: () => state.peur > 2
-      },
-      {
-        text: "Observer attentivement",
-        next: "revelation",
-        condition: () => state.lucidite >= 5
-      },
-      {
-        text: "Faire demi-tour",
-        next: "boucle"
-      }
-    ]
-  },
-
-  revelation: {
-    text: "Tu comprends enfin.\n\nCe lieu est une boucle créée par ton refus.",
-    choices: [
-      {
-        text: "Accepter la vérité",
-        next: "finSecrete",
-        condition: () => state.espoir <= 0 && state.memoire >= 2
-      },
-      {
-        text: "Refuser",
-        next: "boucle"
-      }
-    ]
-  },
-
-  boucle: {
-    text: () => {
-      state.boucle++;
-      return "Tout se dissout.\n\nTu ouvres les yeux.\n\n(Boucle n° " + state.boucle + ")";
-    },
-    choices: [
-      {
-        text: "Continuer",
-        next: "start"
-      }
-    ]
-  },
-
-  mort: {
-    text: "Ton cœur cède.\n\nLa peur a gagné.\n\nFIN 💀",
-    choices: []
-  },
-
-  finSecrete: {
-    text: "Tu n'as plus besoin d'espoir.\n\nLa boucle se brise.\n\nTU ES LIBRE.\n\nFIN SECRÈTE 👁️",
-    choices: []
-  }
-};
-
-/* ======================
-   MOTEUR
-====================== */
-function showScene(id) {
-  const scene = scenes[id];
-  const story = document.getElementById("story");
-  const choicesDiv = document.getElementById("choices");
-
-  const text = typeof scene.text === "function"
-    ? scene.text()
-    : scene.text;
-
-  story.textContent = text;
-  choicesDiv.innerHTML = "";
-
-  scene.choices.forEach(choice => {
-    if (choice.condition && !choice.condition()) return;
-
-    const btn = document.createElement("button");
-    btn.textContent = choice.text;
-    btn.onclick = () => {
-      if (choice.effect) choice.effect();
-      showScene(choice.next);
-    };
-    choicesDiv.appendChild(btn);
-  });
+if(days <= 0){
+summary.innerHTML = "Dates invalides.";
+return;
 }
 
-showScene("start");
+const total = days * pricePerDay;
+
+summary.innerHTML = `
+${days} jour(s).<br>
+${total.toLocaleString()} €.
+`;
+});
 </script>
 
 </body>
