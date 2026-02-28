@@ -3,128 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaLoc - Bot de Réservation VIP</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body,html{height:100%;width:100%;overflow:hidden;background:#0a0a0a;color:white;display:flex;justify-content:center;align-items:center;}
-#bot-container{width:100%;height:100%;display:flex;flex-direction:column;background:#111;}
-#messages{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:15px;}
-.message{max-width:80%;padding:14px 18px;border-radius:15px;position:relative;opacity:0;animation:fadeIn 0.3s forwards;}
-.bot{background:#222;color:red;align-self:flex-start;box-shadow:0 0 10px rgba(255,0,0,0.3);}
-.user{background:#333;color:white;align-self:flex-end;box-shadow:0 0 5px rgba(255,255,255,0.2);}
-#choices{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;padding:10px;}
-.choice-card{flex:1 1 40%;background:#222;border-radius:15px;padding:12px;text-align:center;cursor:pointer;transition:0.3s;box-shadow:0 0 10px rgba(255,255,255,0.05);}
-.choice-card.prestige{box-shadow:0 0 20px rgba(255,0,0,0.7);border:2px solid red;transform:scale(1.05);}
-.choice-card img{width:100%;border-radius:10px;margin-bottom:10px;}
-#calendar-container{display:flex;flex-direction:column;gap:10px;padding:10px;display:none;}
-input[type=date]{padding:12px;border-radius:10px;border:none;background:#222;color:white;}
-button{padding:12px;border-radius:10px;border:none;background:red;color:white;font-weight:700;cursor:pointer;transition:0.3s;}
-button:hover{transform:scale(1.05);}
-.summary{margin-top:10px;font-size:16px;font-weight:600;text-align:center;}
-.typing{width:50px;height:10px;display:flex;gap:5px;align-items:center;margin-left:5px;}
-.typing span{width:10px;height:10px;background:red;border-radius:50%;animation:typingAnim 1s infinite;}
-.typing span:nth-child(2){animation-delay:0.2s;}
-.typing span:nth-child(3){animation-delay:0.4s;}
-@keyframes typingAnim{0%,80%,100%{transform:scale(0.5);opacity:0.3;}40%{transform:scale(1);opacity:1;}}
-@keyframes fadeIn{to{opacity:1;}}
-@media(max-width:600px){
-  .choice-card{flex:1 1 100%;}
-}
-</style>
+<title>NovaLoc - Réservation de Voitures de Luxe</title>
+<!-- TailwindCSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
 
-<div id="bot-container">
-  <div id="messages"></div>
-  <div id="choices"></div>
-  <div id="calendar-container">
-    <input type="date" id="startDate" required>
-    <input type="date" id="endDate" required>
-    <button id="confirmBtn">Confirmer la réservation</button>
-    <div class="summary" id="summary"></div>
+<div class="bg-gray-800 rounded-3xl shadow-2xl p-8 w-full max-w-4xl">
+  <h1 class="text-center text-4xl font-extrabold text-red-600 mb-6">NovaLoc - Réservez Votre Voiture de Luxe</h1>
+  
+  <!-- Choix des véhicules -->
+  <div id="vehicleChoices" class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+    <!-- Les cards seront injectées ici -->
+  </div>
+  
+  <!-- Calendrier et réservation -->
+  <div id="reservationForm" class="hidden flex flex-col items-center gap-4">
+    <input type="date" id="startDate" class="p-3 rounded-lg bg-gray-700 text-white w-full sm:w-1/2" />
+    <input type="date" id="endDate" class="p-3 rounded-lg bg-gray-700 text-white w-full sm:w-1/2" />
+    <button id="confirmBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition">Confirmer la réservation</button>
+    <div id="summary" class="text-white mt-4 font-semibold text-center"></div>
   </div>
 </div>
 
 <script>
-const messages=document.getElementById("messages");
-const choicesDiv=document.getElementById("choices");
-const calendarContainer=document.getElementById("calendar-container");
-const summary=document.getElementById("summary");
-
+// Véhicules
 const vehicles=[
   {name:"Audi RS3 2025",price:490,img:"https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=2000&q=80",prestige:2},
   {name:"BMW M5 2026",price:550,img:"https://images.unsplash.com/photo-1612556632370-3d1f4296c5aa?auto=format&fit=crop&w=2000&q=80",prestige:3},
   {name:"Mercedes AMG GT",price:600,img:"https://images.unsplash.com/photo-1597003791337-6f3cd9074b08?auto=format&fit=crop&w=2000&q=80",prestige:3}
 ];
 
-function addMessage(text,from="bot"){
-  const div=document.createElement("div");
-  div.className="message "+from;
-  div.textContent=text;
-  messages.appendChild(div);
-  messages.scrollTop=messages.scrollHeight;
-  return new Promise(res=>setTimeout(res,500));
-}
+const vehicleChoices = document.getElementById('vehicleChoices');
+const reservationForm = document.getElementById('reservationForm');
+const summary = document.getElementById('summary');
+let selectedVehicle = null;
 
-function addTyping(){
-  const div=document.createElement("div");
-  div.className="message bot";
-  const t=document.createElement("div");
-  t.className="typing";
-  t.innerHTML="<span></span><span></span><span></span>";
-  div.appendChild(t);
-  messages.appendChild(div);
-  messages.scrollTop=messages.scrollHeight;
-  return div;
-}
-
-async function botIntro(){
-  let t=addTyping();
-  await new Promise(r=>setTimeout(r,1500));
-  t.remove();
-  await addMessage("Bonjour et bienvenue chez NovaLoc 😎, votre assistant VIP pour réserver votre voiture de luxe !");
-  await new Promise(r=>setTimeout(r,500));
-  showVehicleChoices();
-}
-
-function showVehicleChoices(){
-  choicesDiv.innerHTML="";
-  vehicles.forEach(v=>{
-    const card=document.createElement("div");
-    card.className="choice-card"+(v.prestige>2?" prestige":"");
-    card.innerHTML=`<img src="${v.img}" alt="${v.name}"><h4>${v.name}</h4><p>${v.price}€/jour</p>`;
-    card.onclick=()=>selectVehicle(v);
-    choicesDiv.appendChild(card);
-  });
-}
-
-let selectedVehicle=null;
-
-async function selectVehicle(v){
-  selectedVehicle=v;
-  choicesDiv.innerHTML="";
-  await addMessage(`Excellent choix ! Vous avez sélectionné : ${v.name}`);
-  await new Promise(r=>setTimeout(r,300));
-  calendarContainer.style.display="flex";
-  await addMessage("Pour quelles dates souhaitez-vous la réserver ?");
-}
-
-// Reservation confirmation
-document.getElementById("confirmBtn").addEventListener("click",async ()=>{
-  const start=new Date(document.getElementById("startDate").value);
-  const end=new Date(document.getElementById("endDate").value);
-  const diff=(end-start)/(1000*60*60*24)+1;
-  if(diff<=0||diff>7){
-    summary.textContent="Veuillez choisir une durée de 1 à 7 jours.";
-    return;
-  }
-  const total=diff*selectedVehicle.price;
-  summary.textContent=`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) coûtera ${total} €. Merci d'avoir choisi NovaLoc !`;
-  await addMessage(`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) est confirmée ! Prix total : ${total} €`);
+// Création des cards
+vehicles.forEach(v=>{
+  const card = document.createElement('div');
+  card.className = `bg-gray-700 rounded-xl shadow-lg cursor-pointer transform hover:scale-105 transition p-4 flex flex-col items-center ${v.prestige>2?'ring-4 ring-red-600':''}`;
+  card.innerHTML = `
+    <img src="${v.img}" alt="${v.name}" class="rounded-xl mb-3 w-full object-cover h-40">
+    <h2 class="text-xl font-bold text-white mb-1">${v.name}</h2>
+    <p class="text-gray-300 font-semibold">${v.price}€/jour</p>
+  `;
+  card.onclick = () => selectVehicle(v);
+  vehicleChoices.appendChild(card);
 });
 
-botIntro();
+function selectVehicle(v){
+  selectedVehicle=v;
+  reservationForm.classList.remove('hidden');
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+
+// Calcul réservation
+document.getElementById('confirmBtn').addEventListener('click',()=>{
+  const start = new Date(document.getElementById('startDate').value);
+  const end = new Date(document.getElementById('endDate').value);
+  const diff=(end-start)/(1000*60*60*24)+1;
+  if(diff<=0||diff>7){
+    summary.textContent="Veuillez choisir une durée de 1 à 7 jours maximum.";
+    return;
+  }
+  const total = diff * selectedVehicle.price;
+  summary.textContent=`Votre réservation de ${selectedVehicle.name} pour ${diff} jour(s) coûtera ${total} €. Merci d'avoir choisi NovaLoc !`;
+});
 </script>
 
 </body>
