@@ -3,177 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurum Drive — Luxury Rental</title>
+<title>Aurum Drive</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-
 :root{
---gold:#e7c873;
---gold-soft:#f4e2a6;
---bg:#0a0a0d;
---card:#141419;
---glass:rgba(255,255,255,0.04);
+--gold:#e6c67a;
+--bg:#0b0b0f;
+--card:#141418;
+--soft:#1c1c22;
 --text:#ffffff;
---muted:#9c9ca6;
+--muted:#8e8e98;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
 
 body{
-background:radial-gradient(circle at top,#111 0%,#050507 60%);
+background:radial-gradient(circle at top,#121217,#050507);
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
 color:var(--text);
-overflow:hidden;
 }
 
-/* CONTAINER */
+/* CARD */
 
 .wrapper{
-width:520px;
-max-width:94%;
-background:linear-gradient(145deg,#141419,#101015);
+width:480px;
+max-width:92%;
+background:var(--card);
 border-radius:32px;
 padding:40px;
 display:flex;
 flex-direction:column;
-gap:25px;
-border:1px solid rgba(231,200,115,.15);
-box-shadow:
-0 0 60px rgba(231,200,115,.08),
-inset 0 0 30px rgba(231,200,115,.05);
-animation:fadeIn 1s ease;
+gap:28px;
+border:1px solid rgba(230,198,122,.15);
+box-shadow:0 0 60px rgba(0,0,0,.6);
 }
 
 /* HEADER */
 
 .header{
-display:flex;
-align-items:center;
-gap:15px;
+text-align:center;
 }
 
 .logo{
-width:56px;height:56px;border-radius:50%;
-background:linear-gradient(145deg,var(--gold),var(--gold-soft));
-display:flex;align-items:center;justify-content:center;
-font-weight:700;color:#111;font-size:18px;
-box-shadow:0 0 25px rgba(231,200,115,.6);
-animation:glow 3s infinite alternate;
+width:60px;
+height:60px;
+margin:0 auto 12px;
+border-radius:50%;
+background:linear-gradient(145deg,var(--gold),#f3dfa5);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+color:#111;
+box-shadow:0 0 30px rgba(230,198,122,.5);
 }
 
-.header strong{font-size:17px;letter-spacing:.6px;}
-.header span{font-size:12px;color:var(--muted);}
+.header h1{
+font-size:18px;
+letter-spacing:1px;
+}
+
+.header span{
+font-size:12px;
+color:var(--muted);
+}
 
 /* CHAT */
 
-.chat{display:flex;flex-direction:column;gap:18px;min-height:120px;}
+.chat{
+display:flex;
+flex-direction:column;
+gap:18px;
+min-height:120px;
+}
 
 .message{
 font-size:14px;
-line-height:1.7;
-animation:slideUp .4s ease;
+line-height:1.6;
+animation:fade .3s ease;
 }
 
 .user{
 align-self:flex-end;
-background:linear-gradient(145deg,var(--gold),var(--gold-soft));
+background:linear-gradient(145deg,var(--gold),#f3dfa5);
 color:#111;
 padding:10px 16px;
 border-radius:20px;
 font-weight:600;
 }
 
-.bot{align-self:flex-start;color:var(--text);}
+.bot{
+color:var(--text);
+}
 
-/* OPTIONS */
+/* CHOICES */
 
-.choices{display:flex;flex-wrap:wrap;gap:12px;}
+.choices{
+display:flex;
+flex-direction:column;
+gap:14px;
+}
 
 .choice{
-padding:11px 18px;
+padding:14px;
 border-radius:22px;
-background:var(--glass);
-border:1px solid rgba(231,200,115,.15);
+background:var(--soft);
+border:1px solid rgba(230,198,122,.15);
 cursor:pointer;
-transition:.4s;
+transition:.3s;
+text-align:center;
 }
 
 .choice:hover{
-background:linear-gradient(145deg,var(--gold),var(--gold-soft));
+background:linear-gradient(145deg,var(--gold),#f3dfa5);
 color:#111;
-transform:translateY(-3px);
-box-shadow:0 8px 25px rgba(231,200,115,.25);
 }
 
 /* CALENDAR */
 
-.calendar-box{
-background:var(--glass);
-padding:18px;
-border-radius:20px;
-border:1px solid rgba(231,200,115,.15);
+.calendar{
 display:flex;
 flex-direction:column;
 gap:12px;
-animation:slideUp .4s ease;
 }
 
 input[type="date"]{
-background:#0f0f14;
-border:1px solid rgba(231,200,115,.2);
-padding:10px;
-border-radius:12px;
+padding:12px;
+border-radius:14px;
+background:var(--soft);
+border:1px solid rgba(230,198,122,.2);
 color:var(--text);
-}
-
-.summary{
-background:rgba(255,255,255,0.03);
-padding:18px;
-border-radius:20px;
-border:1px solid rgba(231,200,115,.2);
-line-height:1.7;
-animation:fadeIn 1s ease;
 }
 
 .cta{
 margin-top:10px;
-padding:15px;
-border-radius:26px;
-background:linear-gradient(145deg,var(--gold),var(--gold-soft));
+padding:14px;
+border-radius:24px;
+background:linear-gradient(145deg,var(--gold),#f3dfa5);
 color:#111;
 border:none;
 font-weight:700;
 cursor:pointer;
-transition:.4s;
+transition:.3s;
 }
 
 .cta:hover{
-transform:translateY(-4px);
-box-shadow:0 12px 35px rgba(231,200,115,.35);
+transform:translateY(-3px);
 }
 
-/* ANIMATIONS */
-
-@keyframes glow{
-from{box-shadow:0 0 20px rgba(231,200,115,.3);}
-to{box-shadow:0 0 45px rgba(231,200,115,.7);}
+.summary{
+background:var(--soft);
+padding:18px;
+border-radius:20px;
+border:1px solid rgba(230,198,122,.2);
+line-height:1.7;
 }
 
-@keyframes slideUp{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
+@keyframes fade{
+from{opacity:0; transform:translateY(6px);}
+to{opacity:1; transform:translateY(0);}
 }
-
-@keyframes fadeIn{
-from{opacity:0;}
-to{opacity:1;}
-}
-
 </style>
 </head>
 
@@ -183,10 +181,8 @@ to{opacity:1;}
 
 <div class="header">
 <div class="logo">AD</div>
-<div>
-<strong>Aurum Drive</strong><br>
-<span>Luxury Automotive Experience</span>
-</div>
+<h1>Aurum Drive</h1>
+<span>Luxury Car Rental</span>
 </div>
 
 <div class="chat" id="chat"></div>
@@ -196,120 +192,118 @@ to{opacity:1;}
 
 <script>
 
-const { jsPDF } = window.jspdf;
-
 const chat=document.getElementById("chat");
 const choices=document.getElementById("choices");
 
-let gamme="", modele="";
-let prixJour=0, caution=0;
-let startDate, endDate, totalDays, total;
+let category="", model="", startDate="", endDate="";
 
-const tarifs={
-"Citadine":{prix:90,caution:1500},
-"SUV Luxe":{prix:290,caution:7000},
-"Sportive":{prix:750,caution:20000},
-"Hypercar":{prix:3000,caution:60000}
-};
+function addBot(text){
+const div=document.createElement("div");
+div.className="message bot";
+div.innerHTML=text;
+chat.appendChild(div);
+}
 
-function addBot(t){let d=document.createElement("div");d.className="message bot";d.innerHTML=t;chat.appendChild(d);}
-function addUser(t){let d=document.createElement("div");d.className="message user";d.innerHTML=t;chat.appendChild(d);}
+function addUser(text){
+const div=document.createElement("div");
+div.className="message user";
+div.innerHTML=text;
+chat.appendChild(div);
+}
 
-addBot("Bienvenue ✨<br>Sélectionnez votre catégorie.");
+/* START */
+
+addBot("Bienvenue. Quel type de véhicule souhaitez-vous ?");
+
 showCategories();
 
 function showCategories(){
 choices.innerHTML=`
-<div class="choice" onclick="selectCat('Citadine')">🚗 Citadine</div>
-<div class="choice" onclick="selectCat('SUV Luxe')">🚙 SUV Luxe</div>
-<div class="choice" onclick="selectCat('Sportive')">🏎 Sportive</div>
-<div class="choice" onclick="selectCat('Hypercar')">🔥 Hypercar</div>`;
+<div class="choice" onclick="selectCategory('Classique')">
+🚗 Classique
+</div>
+<div class="choice" onclick="selectCategory('Prestige')">
+🏎 Prestige
+</div>
+`;
 }
 
-function selectCat(c){
-gamme=c;
-prixJour=tarifs[c].prix;
-caution=tarifs[c].caution;
+function selectCategory(cat){
+category=cat;
 choices.innerHTML="";
-addUser(c);
-addBot("Choisissez votre modèle.");
-showModels();
-}
+addUser(cat);
+addBot("Sélectionnez votre modèle.");
 
-function showModels(){
-const models={
-"Citadine":["Mercedes Classe A","Audi A3"],
-"SUV Luxe":["Range Rover Sport","BMW X7"],
-"Sportive":["Porsche 911","AMG GT"],
-"Hypercar":["Lamborghini Aventador","Ferrari SF90"]
-};
-choices.innerHTML=models[gamme].map(m=>`<div class="choice" onclick="selectModel('${m}')">${m}</div>`).join("");
+if(cat==="Classique"){
+choices.innerHTML=`
+<div class="choice" onclick="selectModel('Mercedes Classe C')">
+Mercedes Classe C
+</div>
+<div class="choice" onclick="selectModel('BMW Série 5')">
+BMW Série 5
+</div>
+`;
+}else{
+choices.innerHTML=`
+<div class="choice" onclick="selectModel('Porsche 911')">
+Porsche 911
+</div>
+<div class="choice" onclick="selectModel('Lamborghini Huracán')">
+Lamborghini Huracán
+</div>
+`;
+}
 }
 
 function selectModel(m){
-modele=m;
+model=m;
 choices.innerHTML="";
 addUser(m);
-showCalendar();
-}
+addBot("Choisissez vos dates.");
 
-function showCalendar(){
-addBot("Sélectionnez vos dates de réservation.");
 choices.innerHTML=`
-<div class="calendar-box">
-<label>Date de début</label>
+<div class="calendar">
 <input type="date" id="start">
-<label>Date de fin</label>
 <input type="date" id="end">
-<button class="cta" onclick="calculate()">Calculer le tarif</button>
-</div>`;
-}
-
-function calculate(){
-startDate=new Date(document.getElementById("start").value);
-endDate=new Date(document.getElementById("end").value);
-
-if(endDate<=startDate){alert("Date invalide");return;}
-
-totalDays=Math.ceil((endDate-startDate)/(1000*60*60*24));
-total=totalDays*prixJour;
-
-showSummary();
+<button class="cta" onclick="showSummary()">Continuer</button>
+</div>
+`;
 }
 
 function showSummary(){
-choices.innerHTML="";
+startDate=document.getElementById("start").value;
+endDate=document.getElementById("end").value;
+
+if(!startDate || !endDate){
+alert("Veuillez sélectionner les dates.");
+return;
+}
+
 addBot(`
 <div class="summary">
 <strong>RÉCAPITULATIF</strong><br><br>
-Véhicule : ${modele}<br>
-Catégorie : ${gamme}<br>
-Du : ${startDate.toLocaleDateString()}<br>
-Au : ${endDate.toLocaleDateString()}<br>
-Durée : ${totalDays} jours<br>
-Prix/jour : ${prixJour} €<br>
-Total : ${total} €<br>
-Caution : ${caution} €<br>
+Véhicule : ${model}<br>
+Catégorie : ${category}<br>
+Du : ${new Date(startDate).toLocaleDateString()}<br>
+Au : ${new Date(endDate).toLocaleDateString()}
 </div>
 `);
-choices.innerHTML=`
-<button class="cta" onclick="invoice()">Télécharger facture provisoire</button>
-<button class="cta" onclick="confirm()">Confirmer réservation</button>`;
-}
 
-function invoice(){
-const doc=new jsPDF();
-doc.text("AURUM DRIVE - FACTURE PROVISOIRE",20,20);
-doc.text("Véhicule : "+modele,20,40);
-doc.text("Du : "+startDate.toLocaleDateString(),20,50);
-doc.text("Au : "+endDate.toLocaleDateString(),20,60);
-doc.text("Total : "+total+" EUR",20,70);
-doc.save("facture_provisoire.pdf");
+choices.innerHTML=`
+<button class="cta" onclick="confirm()">Confirmer réservation</button>
+<button class="cta" onclick="restart()">Modifier</button>
+`;
 }
 
 function confirm(){
-addBot("✨ Réservation confirmée.<br>Un conseiller vous contacte immédiatement.");
+addBot("Votre demande a été envoyée. Un conseiller vous contacte rapidement.");
 choices.innerHTML="";
+}
+
+function restart(){
+chat.innerHTML="";
+addBot("Bienvenue. Quel type de véhicule souhaitez-vous ?");
+showCategories();
 }
 
 </script>
